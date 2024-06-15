@@ -48,9 +48,22 @@
             GrayscaleByteImage resultImage = new(parImage.Width, parImage.Height);
 
             // apply tresholding
-            for (int i = 0; i < parImage.Width * parImage.Height; i++)
+            for (int j = 0; j < parImage.Height; j++)
             {
-                resultImage.Data[i] = (byte)((parImage.Data[i] > threshold) ? 255 : 0);
+                for (int i = 0; i < parImage.Width; i++)
+                {
+                    int index = i + j * parImage.Width;
+
+                    // set left and right border as white 3px for later sobel edge detection
+                    if (i < 3 || i > parImage.Width - 4)
+                    {
+                        resultImage.Data[index] = 255; 
+                    }
+                    else
+                    {
+                        resultImage.Data[index] = (byte)((parImage.Data[index] > threshold) ? 255 : 0);
+                    }
+                }
             }
 
             return resultImage;

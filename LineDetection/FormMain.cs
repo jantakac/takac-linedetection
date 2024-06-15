@@ -1,19 +1,23 @@
 using LineDetection.DrawingClasses;
 using LineDetection.MathImageProcessing;
 using System.Data;
+using System.Diagnostics;
 
 namespace LineDetection
 {
     public partial class FormMain : Form
     {
-        int imageWidth;
-        int imageHeight;
-        int radius;
+        private Stopwatch stopwatch = new();
 
-        GrayscaleByteImage? baseImage;
-        GrayscaleByteImage? processedImage;
+        private int imageWidth;
+        private int imageHeight;
+        private int radius;
+        private int[]? curvePoints;
 
-        long duration = 0;
+        private GrayscaleByteImage? baseImage;
+        private GrayscaleByteImage? processedImage;
+
+        private long duration = 0;
 
         public FormMain()
         {
@@ -43,7 +47,7 @@ namespace LineDetection
             if (processedImage != null)
             {
                 using Bitmap bitmap = processedImage.ToBitmap();
-                g.DrawImage(bitmap, new Point(imageWidth+50, 0));
+                g.DrawImage(bitmap, new Point(imageWidth + 50, 0));
             }
 
             if (checkBoxHistogram.Checked)
@@ -51,15 +55,15 @@ namespace LineDetection
                 if (baseImage != null)
                 {
                     double[] histogramBase = baseImage.Histogram;
-                    using Bitmap bitmap = new (2*histogramBase.Length, 320);
+                    using Bitmap bitmap = new(2 * histogramBase.Length, 320);
 
                     // histogram processedImage
                     for (int x = 0; x < histogramBase.Length; x++)
                     {
-                        for(int y = 0; y < (int)(histogramBase[x] * 300.0); y++)
+                        for (int y = 0; y < (int)(histogramBase[x] * 300.0); y++)
                         {
-                            bitmap.SetPixel(2*x, y+14, Color.OrangeRed);
-                            bitmap.SetPixel(2*x+1, y+14, Color.OrangeRed);
+                            bitmap.SetPixel(2 * x, y + 14, Color.OrangeRed);
+                            bitmap.SetPixel(2 * x + 1, y + 14, Color.OrangeRed);
                         }
                     }
 
@@ -93,6 +97,20 @@ namespace LineDetection
                     gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 15), new Point(bitmap.Width, bitmap.Height - 15));
                     gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 16), new Point(bitmap.Width, bitmap.Height - 16));
 
+                    if (curvePoints != null)
+                    {
+                        int y = 0;
+
+                        foreach (var point in curvePoints)
+                        {
+                            Rectangle r = new(new Point(point, y), new Size(3, 3));
+                            y += 10;
+
+                            gb.FillRectangle(Brushes.Orange, r);
+                        }
+                    }
+
+
                     g.DrawImage(bitmap, new Point(imageWidth + 50, imageHeight));
                 }
             }
@@ -111,6 +129,8 @@ namespace LineDetection
         /// </summary>
         private void FormMain_Load(object sender, EventArgs e)
         {
+            stopwatch.Start();
+
             string path = @"C:\\Users\\Michal Lekýr\\Desktop\\GrayscaleImages";
             DataTable table = new();
             table.Columns.Add("File Name");
@@ -141,8 +161,8 @@ namespace LineDetection
         /// </summary>
         private void ReloadAndDisplay()
         {
-            baseImage = null; 
-            processedImage = null; 
+            baseImage = null;
+            processedImage = null;
 
 
             string? selectedString = comboBox1.SelectedValue as string;
@@ -186,6 +206,21 @@ namespace LineDetection
                 processedImage = OtsuTresholding.Process(processedImage != null ? processedImage : baseImage);
             }
 
+            if (checkBoxSobelEdge.Checked)
+            {
+                curvePoints = SobelEdgeDetection.Process(processedImage != null ? processedImage : baseImage);
+            }
+
+            var ts1 = Stopwatch.GetElapsedTime(0);
+
+
+            BezierCurveFitting bcf = new();
+            bcf.DoIt();
+
+            var ts2 = Stopwatch.GetElapsedTime(0);
+
+            Debug.WriteLine((ts2 - ts1).TotalMilliseconds);
+
             doubleBufferedPanel.Invalidate();
         }
 
@@ -215,6 +250,11 @@ namespace LineDetection
         }
 
         private void numericUpDownRadius_ValueChanged(object sender, EventArgs e)
+        {
+            ReloadAndDisplay();
+        }
+
+        private void checkBoxSobelEdge_CheckedChanged(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }

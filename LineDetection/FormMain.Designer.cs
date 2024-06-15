@@ -32,6 +32,7 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             panelLeft = new Panel();
+            checkBoxSobelEdge = new CheckBox();
             checkBoxHistogram = new CheckBox();
             numericUpDownWidth = new NumericUpDown();
             numericUpDownHeight = new NumericUpDown();
@@ -79,6 +80,7 @@
             // panelLeft
             // 
             panelLeft.BorderStyle = BorderStyle.FixedSingle;
+            panelLeft.Controls.Add(checkBoxSobelEdge);
             panelLeft.Controls.Add(checkBoxHistogram);
             panelLeft.Controls.Add(numericUpDownWidth);
             panelLeft.Controls.Add(numericUpDownHeight);
@@ -96,10 +98,21 @@
             panelLeft.Size = new Size(275, 960);
             panelLeft.TabIndex = 1;
             // 
+            // checkBoxSobelEdge
+            // 
+            checkBoxSobelEdge.AutoSize = true;
+            checkBoxSobelEdge.Location = new Point(5, 182);
+            checkBoxSobelEdge.Name = "checkBoxSobelEdge";
+            checkBoxSobelEdge.Size = new Size(118, 19);
+            checkBoxSobelEdge.TabIndex = 9;
+            checkBoxSobelEdge.Text = "Apply Sobel edge";
+            checkBoxSobelEdge.UseVisualStyleBackColor = true;
+            checkBoxSobelEdge.CheckedChanged += checkBoxSobelEdge_CheckedChanged;
+            // 
             // checkBoxHistogram
             // 
             checkBoxHistogram.AutoSize = true;
-            checkBoxHistogram.Location = new Point(5, 180);
+            checkBoxHistogram.Location = new Point(5, 218);
             checkBoxHistogram.Name = "checkBoxHistogram";
             checkBoxHistogram.Size = new Size(117, 19);
             checkBoxHistogram.TabIndex = 8;
@@ -273,5 +286,6 @@
         private NumericUpDown numericUpDownHeight;
         private CheckBox checkBoxOtsuTreshold;
         private CheckBox checkBoxHistogram;
+        private CheckBox checkBoxSobelEdge;
     }
 }
