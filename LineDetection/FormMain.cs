@@ -47,6 +47,17 @@ namespace LineDetection
             if (processedImage != null)
             {
                 using Bitmap bitmap = processedImage.ToBitmap();
+                using Graphics gb = Graphics.FromImage(bitmap);
+
+                if (curvePoints != null)
+                {
+                    for (int i = 0; i < curvePoints.Length; i += 2)
+                    {
+                        Rectangle r = new(new Point(curvePoints[i], curvePoints[i + 1]), new Size(3, 3));
+                        gb.FillRectangle(Brushes.Yellow, r);
+                    }
+                }
+
                 g.DrawImage(bitmap, new Point(imageWidth + 50, 0));
             }
 
@@ -96,20 +107,6 @@ namespace LineDetection
                     using Graphics gb = Graphics.FromImage(bitmap);
                     gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 15), new Point(bitmap.Width, bitmap.Height - 15));
                     gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 16), new Point(bitmap.Width, bitmap.Height - 16));
-
-                    if (curvePoints != null)
-                    {
-                        int y = 0;
-
-                        foreach (var point in curvePoints)
-                        {
-                            Rectangle r = new(new Point(point, y), new Size(3, 3));
-                            y += 10;
-
-                            gb.FillRectangle(Brushes.Orange, r);
-                        }
-                    }
-
 
                     g.DrawImage(bitmap, new Point(imageWidth + 50, imageHeight));
                 }
@@ -163,7 +160,7 @@ namespace LineDetection
         {
             baseImage = null;
             processedImage = null;
-
+            curvePoints = null; 
 
             string? selectedString = comboBox1.SelectedValue as string;
 

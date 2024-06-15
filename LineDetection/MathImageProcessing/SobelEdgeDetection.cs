@@ -25,7 +25,7 @@
                     int sum = parImage.Data[index - 3] * -1 + parImage.Data[index - 2] * -1 + parImage.Data[index - 1] * -1 +
                         parImage.Data[index] + parImage.Data[index + 1] + parImage.Data[index - 2];
 
-                    if (sum <= 510 || sum >= 510)
+                    if (sum <= -510 || sum >= 510)
                     {
                         edgeCount++;
 
@@ -38,6 +38,7 @@
                             indexRight = i;
 
                             result.Add((int)Math.Round(0.5 * (indexRight + indexLeft)));
+                            result.Add(j);
                             continue; 
                         }
                     }
