@@ -1,5 +1,4 @@
-﻿using MathNet.Numerics.LinearAlgebra;
-using System.Diagnostics;   // NuGet package for numerical linear algebra
+﻿using MathNet.Numerics.LinearAlgebra; // NuGet package for numerical linear algebra
 
 namespace LineDetection.MathImageProcessing
 {

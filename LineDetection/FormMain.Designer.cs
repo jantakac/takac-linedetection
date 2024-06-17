@@ -75,7 +75,7 @@
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.Size = new Size(93, 22);
             exitToolStripMenuItem.Text = "Exit";
-            exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
+            exitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
             // 
             // panelLeft
             // 
@@ -107,7 +107,7 @@
             checkBoxSobelEdge.TabIndex = 9;
             checkBoxSobelEdge.Text = "Apply Sobel edge";
             checkBoxSobelEdge.UseVisualStyleBackColor = true;
-            checkBoxSobelEdge.CheckedChanged += checkBoxSobelEdge_CheckedChanged;
+            checkBoxSobelEdge.CheckedChanged += CheckBoxSobelEdge_CheckedChanged;
             // 
             // checkBoxHistogram
             // 
@@ -118,7 +118,7 @@
             checkBoxHistogram.TabIndex = 8;
             checkBoxHistogram.Text = "Show histograms";
             checkBoxHistogram.UseVisualStyleBackColor = true;
-            checkBoxHistogram.CheckedChanged += checkBoxHistogram_CheckedChanged;
+            checkBoxHistogram.CheckedChanged += CheckBoxHistogram_CheckedChanged;
             // 
             // numericUpDownWidth
             // 
@@ -129,7 +129,7 @@
             numericUpDownWidth.Size = new Size(80, 23);
             numericUpDownWidth.TabIndex = 7;
             numericUpDownWidth.Value = new decimal(new int[] { 512, 0, 0, 0 });
-            numericUpDownWidth.ValueChanged += numericUpDownWidth_ValueChanged;
+            numericUpDownWidth.ValueChanged += NumericUpDownWidth_ValueChanged;
             // 
             // numericUpDownHeight
             // 
@@ -140,7 +140,7 @@
             numericUpDownHeight.Size = new Size(80, 23);
             numericUpDownHeight.TabIndex = 7;
             numericUpDownHeight.Value = new decimal(new int[] { 512, 0, 0, 0 });
-            numericUpDownHeight.ValueChanged += numericUpDownHeight_ValueChanged;
+            numericUpDownHeight.ValueChanged += NumericUpDownHeight_ValueChanged;
             // 
             // numericUpDownRadius
             // 
@@ -151,7 +151,7 @@
             numericUpDownRadius.Size = new Size(80, 23);
             numericUpDownRadius.TabIndex = 7;
             numericUpDownRadius.Value = new decimal(new int[] { 15, 0, 0, 0 });
-            numericUpDownRadius.ValueChanged += numericUpDownRadius_ValueChanged;
+            numericUpDownRadius.ValueChanged += NumericUpDownRadius_ValueChanged;
             // 
             // label4
             // 
@@ -171,7 +171,7 @@
             checkBoxOtsuTreshold.TabIndex = 5;
             checkBoxOtsuTreshold.Text = "Apply Otsu treshold";
             checkBoxOtsuTreshold.UseVisualStyleBackColor = true;
-            checkBoxOtsuTreshold.CheckedChanged += checkBoxOtsuTreshold_CheckedChanged;
+            checkBoxOtsuTreshold.CheckedChanged += CheckBoxOtsuTreshold_CheckedChanged;
             // 
             // checkBoxGaussianBlur
             // 
@@ -182,7 +182,7 @@
             checkBoxGaussianBlur.TabIndex = 5;
             checkBoxGaussianBlur.Text = "Apply Gaussian blur";
             checkBoxGaussianBlur.UseVisualStyleBackColor = true;
-            checkBoxGaussianBlur.CheckedChanged += checkBoxGaussianBlur_CheckedChanged;
+            checkBoxGaussianBlur.CheckedChanged += CheckBoxGaussianBlur_CheckedChanged;
             // 
             // label3
             // 
@@ -238,7 +238,7 @@
             doubleBufferedPanel.Name = "doubleBufferedPanel";
             doubleBufferedPanel.Size = new Size(1169, 960);
             doubleBufferedPanel.TabIndex = 0;
-            doubleBufferedPanel.Paint += doubleBufferedPanel_Paint;
+            doubleBufferedPanel.Paint += DoubleBufferedPanel_Paint;
             // 
             // FormMain
             // 

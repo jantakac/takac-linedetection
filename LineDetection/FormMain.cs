@@ -7,7 +7,7 @@ namespace LineDetection
 {
     public partial class FormMain : Form
     {
-        private Stopwatch stopwatch = new();
+        private readonly Stopwatch stopwatch = new();
 
         private int imageWidth;
         private int imageHeight;
@@ -16,8 +16,6 @@ namespace LineDetection
 
         private GrayscaleByteImage? baseImage;
         private GrayscaleByteImage? processedImage;
-
-        private long duration = 0;
 
         public FormMain()
         {
@@ -29,12 +27,12 @@ namespace LineDetection
                      true);
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-        private void doubleBufferedPanel_Paint(object sender, PaintEventArgs e)
+        private void DoubleBufferedPanel_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
 
@@ -128,7 +126,7 @@ namespace LineDetection
         {
             stopwatch.Start();
 
-            string path = @"C:\\Users\\Michal Lekýr\\Desktop\\GrayscaleImages";
+            string path = @"C:\\Users\\HP\\Desktop\\GrayscaleImages";
             DataTable table = new();
             table.Columns.Add("File Name");
             table.Columns.Add("File Path");
@@ -221,37 +219,37 @@ namespace LineDetection
             doubleBufferedPanel.Invalidate();
         }
 
-        private void checkBoxOtsuTreshold_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxOtsuTreshold_CheckedChanged(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }
 
-        private void checkBoxGaussianBlur_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxGaussianBlur_CheckedChanged(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }
 
-        private void checkBoxHistogram_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxHistogram_CheckedChanged(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }
 
-        private void numericUpDownWidth_ValueChanged(object sender, EventArgs e)
+        private void NumericUpDownWidth_ValueChanged(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }
 
-        private void numericUpDownHeight_ValueChanged(object sender, EventArgs e)
+        private void NumericUpDownHeight_ValueChanged(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }
 
-        private void numericUpDownRadius_ValueChanged(object sender, EventArgs e)
+        private void NumericUpDownRadius_ValueChanged(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }
 
-        private void checkBoxSobelEdge_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxSobelEdge_CheckedChanged(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }
