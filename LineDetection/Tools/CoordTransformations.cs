@@ -43,11 +43,17 @@ namespace LineDetection.Tools
         }
 
         /// <summary>
-        /// FromUVtoXYMatrix
+        /// FromUVtoXYVector
         /// </summary>
-        public Vector<float> FromUVtoXYMatrix(Point p)
+        public Vector<double> FromUVtoXYVectorDouble(Point p)
         {
-            return Vector<float>.Build.DenseOfArray([p.X / (float)Umax * Xmax, Ymax - p.Y / (float)Vmax * Ymax, 1]);
+            Vector<double> v = Vector<double>.Build.Dense(3);
+
+            v[0] = (p.X - Umin) / (double)(Umax - Umin) * (Xmax - Xmin) + Xmin;
+            v[1] = (p.Y - Vmin) / (double)(Vmax - Vmin) * (Ymax - Ymin) + Ymin;
+            v[2] = 0.0;
+
+            return v;
         }
 
         /// <summary>

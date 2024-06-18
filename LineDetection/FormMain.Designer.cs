@@ -51,6 +51,7 @@
             doubleBufferedPanel = new Tools.DoubleBufferedPanel();
             panelBottomText = new Panel();
             textBoxMessages = new TextBox();
+            checkBoxFitBezier = new CheckBox();
             menuStrip1.SuspendLayout();
             panelLeft.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownWidth).BeginInit();
@@ -90,6 +91,7 @@
             panelLeft.Controls.Add(buttonRefresh);
             panelLeft.Controls.Add(label5);
             panelLeft.Controls.Add(checkBoxSobelEdge);
+            panelLeft.Controls.Add(checkBoxFitBezier);
             panelLeft.Controls.Add(checkBoxHistogram);
             panelLeft.Controls.Add(numericUpDownWidth);
             panelLeft.Controls.Add(numericUpDownHeight);
@@ -110,7 +112,7 @@
             // 
             // buttonRefresh
             // 
-            buttonRefresh.Location = new Point(5, 282);
+            buttonRefresh.Location = new Point(3, 314);
             buttonRefresh.Name = "buttonRefresh";
             buttonRefresh.Size = new Size(75, 23);
             buttonRefresh.TabIndex = 11;
@@ -141,7 +143,7 @@
             // checkBoxHistogram
             // 
             checkBoxHistogram.AutoSize = true;
-            checkBoxHistogram.Location = new Point(5, 248);
+            checkBoxHistogram.Location = new Point(3, 280);
             checkBoxHistogram.Name = "checkBoxHistogram";
             checkBoxHistogram.Size = new Size(117, 19);
             checkBoxHistogram.TabIndex = 8;
@@ -299,6 +301,17 @@
             textBoxMessages.Size = new Size(1169, 157);
             textBoxMessages.TabIndex = 0;
             // 
+            // checkBoxFitBezier
+            // 
+            checkBoxFitBezier.AutoSize = true;
+            checkBoxFitBezier.Location = new Point(5, 246);
+            checkBoxFitBezier.Name = "checkBoxFitBezier";
+            checkBoxFitBezier.Size = new Size(137, 19);
+            checkBoxFitBezier.TabIndex = 8;
+            checkBoxFitBezier.Text = "Fit Bezier cubic curve";
+            checkBoxFitBezier.UseVisualStyleBackColor = true;
+            checkBoxFitBezier.CheckedChanged += CheckBoxFitBezier_CheckedChanged;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -355,5 +368,6 @@
         private Panel panelBottomText;
         private TextBox textBoxMessages;
         private Button buttonRefresh;
+        private CheckBox checkBoxFitBezier;
     }
 }

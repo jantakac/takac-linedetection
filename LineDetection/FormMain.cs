@@ -3,6 +3,7 @@ using LineDetection.MathImageProcessing;
 using LineDetection.Tools;
 using System.Data;
 using System.Diagnostics;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace LineDetection
 {
@@ -54,7 +55,7 @@ namespace LineDetection
                 {
                     for (int i = 0; i < curvePoints.Length; i += 2)
                     {
-                        Rectangle r = new(new Point(curvePoints[i], curvePoints[i + 1]), new Size(3, 3));
+                        Rectangle r = new(new Point(curvePoints[i]-2, curvePoints[i + 1]-2), new Size(4, 4));
                         gb.FillRectangle(Brushes.Yellow, r);
                     }
                 }
@@ -165,6 +166,9 @@ namespace LineDetection
 
             Stopwatch stopwatch = new();
 
+            coordTransformations = new((int)numericUpDownWidth.Value, 0, 0, (int)numericUpDownHeight.Value,
+                                       -500.0f, 0.0f, 500.0f, 1000.0f);
+
             string? selectedString = comboBox1.SelectedValue as string;
 
             if (string.IsNullOrEmpty(selectedString))
@@ -232,15 +236,25 @@ namespace LineDetection
                 textBoxMessages.AppendText($">>> Sobel edge detector - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
             }
 
+            if (checkBoxFitBezier.Checked && curvePoints != null && curvePoints.Length > 3)
+            {
+                Vector<double>[] floatPoints = new Vector<double>[curvePoints.Length / 2];
 
-            stopwatch.Start();
+                int j = 0; 
 
-            BezierCurveFitting bcf = new();
-            bcf.DoIt();
+                for (int i = 0; i < curvePoints.Length; i+=2)
+                {
+                    floatPoints[j++] = coordTransformations.FromUVtoXYVectorDouble(new Point(curvePoints[i], curvePoints[i+1]));
+                }
 
-            stopwatch.Stop();
-            TimeSpan et = stopwatch.Elapsed;
-            textBoxMessages.AppendText($">>> Bezier curve fit - Elapsed Time (ms): {et.TotalMilliseconds}" + "\r\n");
+                stopwatch.Start();
+
+                var bezierCurve = BezierCurveFitting.FitCubicBezier(floatPoints);
+
+                stopwatch.Stop();
+                TimeSpan et = stopwatch.Elapsed;
+                textBoxMessages.AppendText($">>> Bezier curve fit - Elapsed Time (ms): {et.TotalMilliseconds}" + "\r\n");
+            }
 
             textBoxMessages.AppendText("\r\n");
 
@@ -259,6 +273,11 @@ namespace LineDetection
         }
 
         private void CheckBoxHistogram_CheckedChanged(object sender, EventArgs e)
+        {
+            ReloadAndDisplay();
+        }
+
+        private void CheckBoxFitBezier_CheckedChanged(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }
