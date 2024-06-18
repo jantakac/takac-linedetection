@@ -1,5 +1,6 @@
 using LineDetection.DrawingClasses;
 using LineDetection.MathImageProcessing;
+using LineDetection.Tools;
 using System.Data;
 using System.Diagnostics;
 
@@ -17,6 +18,7 @@ namespace LineDetection
 
         private GrayscaleByteImage? baseImage;
         private GrayscaleByteImage? processedImage;
+        private CoordTransformations? coordTransformations;
 
         public FormMain()
         {
