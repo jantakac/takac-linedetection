@@ -12,6 +12,7 @@ namespace LineDetection
         private int imageWidth;
         private int imageHeight;
         private int radius;
+        private int step; 
         private int[]? curvePoints;
 
         private GrayscaleByteImage? baseImage;
@@ -126,7 +127,7 @@ namespace LineDetection
         {
             stopwatch.Start();
 
-            string path = @"C:\\Users\\HP\\Desktop\\GrayscaleImages";
+            string path = @"C:\\Users\\Michal Lekýr\\Desktop\\GrayscaleImages";
             DataTable table = new();
             table.Columns.Add("File Name");
             table.Columns.Add("File Path");
@@ -158,7 +159,9 @@ namespace LineDetection
         {
             baseImage = null;
             processedImage = null;
-            curvePoints = null; 
+            curvePoints = null;
+
+            Stopwatch stopwatch = new();
 
             string? selectedString = comboBox1.SelectedValue as string;
 
@@ -180,6 +183,7 @@ namespace LineDetection
             imageWidth = (int)numericUpDownWidth.Value;
             imageHeight = (int)numericUpDownHeight.Value;
             radius = (int)numericUpDownRadius.Value;
+            step = (int)numericUpDownStep.Value;
 
             baseImage = new GrayscaleByteImage(imageWidth, imageHeight);
 
@@ -193,29 +197,52 @@ namespace LineDetection
 
             if (checkBoxGaussianBlur.Checked)
             {
+                stopwatch.Start();
+
                 processedImage = GaussianBlurGrayscale.Process(baseImage, radius);
+
+                stopwatch.Stop();
+                TimeSpan elapsedTime = stopwatch.Elapsed;
+
+                textBoxMessages.AppendText($">>> Gaussian Blur Grayscale - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
             }
 
             if (checkBoxOtsuTreshold.Checked)
             {
-                processedImage = OtsuTresholding.Process(processedImage != null ? processedImage : baseImage);
+                stopwatch.Start();
+
+                processedImage = OtsuTresholding.Process(processedImage ?? baseImage);
+
+                stopwatch.Stop();
+                TimeSpan elapsedTime = stopwatch.Elapsed;
+
+                textBoxMessages.AppendText($">>> Histogram + Otsu treshold - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
             }
 
             if (checkBoxSobelEdge.Checked)
             {
-                curvePoints = SobelEdgeDetection.Process(processedImage != null ? processedImage : baseImage);
+                stopwatch.Start();
+
+                curvePoints = SobelEdgeDetection.Process(processedImage ?? baseImage, step);
+
+                stopwatch.Stop();
+                TimeSpan elapsedTime = stopwatch.Elapsed;
+                textBoxMessages.AppendText($">>> Sobel edge detector - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
             }
 
-            var ts1 = Stopwatch.GetElapsedTime(0);
 
+            stopwatch.Start();
 
             BezierCurveFitting bcf = new();
             bcf.DoIt();
 
-            var ts2 = Stopwatch.GetElapsedTime(0);
+            stopwatch.Stop();
+            TimeSpan et = stopwatch.Elapsed;
+            textBoxMessages.AppendText($">>> Bezier curve fit - Elapsed Time (ms): {et.TotalMilliseconds}" + "\r\n");
 
-            Debug.WriteLine((ts2 - ts1).TotalMilliseconds);
+            textBoxMessages.AppendText("\r\n");
 
+            // repaint drawing
             doubleBufferedPanel.Invalidate();
         }
 
@@ -250,6 +277,11 @@ namespace LineDetection
         }
 
         private void CheckBoxSobelEdge_CheckedChanged(object sender, EventArgs e)
+        {
+            ReloadAndDisplay();
+        }
+
+        private void ButtonRefresh_Click(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }

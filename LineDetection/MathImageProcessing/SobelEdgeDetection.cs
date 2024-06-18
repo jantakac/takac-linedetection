@@ -2,7 +2,7 @@
 {
     public static class SobelEdgeDetection
     {
-        public static int[] Process(GrayscaleByteImage parImage)
+        public static int[] Process(GrayscaleByteImage parImage, int parStep)
         {
             ArgumentNullException.ThrowIfNull(parImage);
 
@@ -13,7 +13,7 @@
             int edgeCount = 0;
 
             // apply tresholding
-            for (int j = 0; j < parImage.Height; j += 10)
+            for (int j = 0; j < parImage.Height; j += parStep)
             {
                 edgeCount = 0; 
 
