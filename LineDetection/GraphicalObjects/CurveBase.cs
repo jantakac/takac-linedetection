@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using LineDetection.Tools;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace Editor2D.Drawing2DMath
 {
@@ -7,16 +7,24 @@ namespace Editor2D.Drawing2DMath
     {
         #region Properties
 
-        protected readonly List<Matrix> controlPoints;
-        protected List<float> segmentLengths;
+        protected readonly List<Vector<double>> controlPoints;
+        protected List<double> segmentLengths;
         protected int curvePrecision = 70;
-        protected float length = 0;
-        protected List<Matrix> curvePoints;
+        protected double length = 0;
+        protected List<Vector<double>> curvePoints;
 
         /// <summary>
         /// Curve length
         /// </summary>
-        public float Length { get { return length; } private set { } }
+        public double Length 
+        { 
+            get 
+            { 
+                return length; 
+            } private set 
+            { 
+            } 
+        }
 
         /// <summary>
         /// Curve precision
@@ -41,13 +49,13 @@ namespace Editor2D.Drawing2DMath
         /// <summary>
         /// Curve control points
         /// </summary>
-        public List<Matrix> ControlPoints
+        public List<Vector<double>> ControlPoints
         {
             get
             {
-                var newList = new List<Matrix>(controlPoints.Count);
+                var newList = new List<Vector<double>>(controlPoints.Count);
 
-                foreach (Matrix point in controlPoints)
+                foreach (var point in controlPoints)
                     newList.Add(point.Clone());
 
                 return newList;
@@ -88,19 +96,19 @@ namespace Editor2D.Drawing2DMath
                 if (value == null)
                     SelectedControlPointIndices = null;
                 else
-                    SelectedControlPointIndices = new int[] { value.Value };
+                    SelectedControlPointIndices = [value.Value];
             }
         }
 
         /// <summary>
         /// SelectedControlPointIndices
         /// </summary>
-        public int[] SelectedControlPointIndices { get; set; } = null;
+        public int[] SelectedControlPointIndices { get; set; }
 
         /// <summary>
         /// SelectedControlPoint
         /// </summary>
-        public Matrix SelectedControlPoint
+        public Vector<double>? SelectedControlPoint
         {
             get
             {
@@ -114,7 +122,7 @@ namespace Editor2D.Drawing2DMath
         /// <summary>
         /// Matrix
         /// </summary>
-        public Matrix this[int index]
+        public Vector<double> this[int index]
         {
             get => controlPoints[index];
             set => controlPoints[index] = value;
@@ -129,7 +137,10 @@ namespace Editor2D.Drawing2DMath
         /// </summary>
         public CurveBase()
         {
-            controlPoints = new List<Matrix>();
+            controlPoints = [];
+            segmentLengths = [];
+            curvePoints = [];
+            SelectedControlPointIndices = [];
         }
 
         #endregion
@@ -137,26 +148,26 @@ namespace Editor2D.Drawing2DMath
         /// <summary>
         /// Is point hit by U, V coordinates
         /// </summary>
-        private bool IsHitByUV(Matrix controlPoint, Point p)
+        private bool IsHitByUV(Vector<double> controlPoint, Point p, CoordTransformations ct)
         {
-            Matrix xyMatrix = Math2DTools.GetXY(p);
-            PointF xyPoint = new PointF((float)xyMatrix[0, 0] - 2, (float)xyMatrix[1, 0] - 2);
-            RectangleF r = new RectangleF(xyPoint, new Size(4, 4));
-            PointF point = new PointF((float)controlPoint[0, 0], (float)controlPoint[1, 0]);
+            Vector<double> xyMatrix = ct.FromUVtoXYVectorDouble(p);
+            PointF xyPoint = new((float)xyMatrix[0] - 2, (float)xyMatrix[1] - 2);
+            RectangleF r = new(xyPoint, new Size(4, 4));
+            PointF point = new((float)controlPoint[0], (float)controlPoint[1]);
             return r.Contains(point);
         }
         /// <summary>
         /// Prepocitanie krivky podla potreby
         /// </summary>
         protected abstract void RecalculateCurve();
-        public abstract Matrix GetPointAndAngleOnCurve(float time, out float angle);
+        public abstract Vector GetPointAndAngleOnCurve(float time, out float angle);
 
         #region Public methods
 
         /// <summary>
         /// Add
         /// </summary>
-        public void Add(Matrix point)
+        public void Add(Vector<double> point)
         {
             controlPoints.Add(point);
 
@@ -166,7 +177,7 @@ namespace Editor2D.Drawing2DMath
         /// <summary>
         /// Insert
         /// </summary>
-        public void Insert(int index, Matrix point)
+        public void Insert(int index, Vector<double> point)
         {
             controlPoints.Insert(index, point);
 
@@ -176,9 +187,9 @@ namespace Editor2D.Drawing2DMath
         /// <summary>
         /// Remove
         /// </summary>
-        public Matrix Remove(int index)
+        public Vector<double> Remove(int index)
         {
-            Matrix removedPoint = controlPoints[index];
+            Vector<double> removedPoint = controlPoints[index];
             controlPoints.RemoveAt(index);
 
             RecalculateCurve();
@@ -189,11 +200,11 @@ namespace Editor2D.Drawing2DMath
         /// <summary>
         /// Get vertex ID by U, V coordinates
         /// </summary>
-        public int? GetVertexIDByUV(Point p)
+        public int? GetVertexIDByUV(Point p, CoordTransformations ct)
         {
             for (int i = controlPoints.Count - 1; i >= 0; i--)
             {
-                if (IsHitByUV(controlPoints[i], p))
+                if (IsHitByUV(controlPoints[i], p, ct))
                     return i;
             }
             return null;
@@ -202,7 +213,7 @@ namespace Editor2D.Drawing2DMath
         /// <summary>
         /// Move
         /// </summary>
-        public void Move(Matrix p, int? vID)
+        public void Move(Vector<double> p, int? vID)
         {
             if (vID == null)
                 return;
