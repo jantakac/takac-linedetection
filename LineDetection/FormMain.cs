@@ -4,6 +4,7 @@ using LineDetection.Tools;
 using System.Data;
 using System.Diagnostics;
 using MathNet.Numerics.LinearAlgebra;
+using LineDetection.GraphicalObjects;
 
 namespace LineDetection
 {
@@ -16,10 +17,11 @@ namespace LineDetection
         private int radius;
         private int step; 
         private int[]? curvePoints;
-
+        
         private GrayscaleByteImage? baseImage;
         private GrayscaleByteImage? processedImage;
         private CoordTransformations? coordTransformations;
+        private BezierCurve? bezierCurve; 
 
         public FormMain()
         {
@@ -163,6 +165,7 @@ namespace LineDetection
             baseImage = null;
             processedImage = null;
             curvePoints = null;
+            bezierCurve = null; 
 
             Stopwatch stopwatch = new();
 
@@ -249,7 +252,10 @@ namespace LineDetection
 
                 stopwatch.Start();
 
-                var bezierCurve = BezierCurveFitting.FitCubicBezier(floatPoints);
+                Vector<double>[] controlPoints = BezierCurveFitting.FitCubicBezier(floatPoints);
+
+                if (controlPoints != null)
+                    bezierCurve = new([.. controlPoints], coordTransformations);
 
                 stopwatch.Stop();
                 TimeSpan et = stopwatch.Elapsed;

@@ -1,7 +1,7 @@
 ﻿using LineDetection.Tools;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Editor2D.Drawing2DMath
+namespace LineDetection.GraphicalObjects
 {
     public abstract class CurveBase
     {
@@ -11,7 +11,8 @@ namespace Editor2D.Drawing2DMath
         protected List<double> segmentLengths;
         protected int curvePrecision = 70;
         protected double length = 0;
-        protected List<Vector<double>> curvePoints;
+        protected List<Vector<double>>? curvePoints;
+        protected CoordTransformations ct;
 
         /// <summary>
         /// Curve length
@@ -21,8 +22,6 @@ namespace Editor2D.Drawing2DMath
             get 
             { 
                 return length; 
-            } private set 
-            { 
             } 
         }
 
@@ -91,7 +90,7 @@ namespace Editor2D.Drawing2DMath
 
                 return null;
             }
-            internal set
+            set
             {
                 if (value == null)
                     SelectedControlPointIndices = null;
@@ -103,7 +102,7 @@ namespace Editor2D.Drawing2DMath
         /// <summary>
         /// SelectedControlPointIndices
         /// </summary>
-        public int[] SelectedControlPointIndices { get; set; }
+        public int[]? SelectedControlPointIndices { get; set; }
 
         /// <summary>
         /// SelectedControlPoint
@@ -135,12 +134,13 @@ namespace Editor2D.Drawing2DMath
         /// <summary>
         /// Konstruktor
         /// </summary>
-        public CurveBase()
+        public CurveBase(List<Vector<double>> parControlPoints, CoordTransformations parCoordTrans)
         {
-            controlPoints = [];
+            controlPoints = parControlPoints;
             segmentLengths = [];
             curvePoints = [];
             SelectedControlPointIndices = [];
+            ct = parCoordTrans; 
         }
 
         #endregion
@@ -148,7 +148,7 @@ namespace Editor2D.Drawing2DMath
         /// <summary>
         /// Is point hit by U, V coordinates
         /// </summary>
-        private bool IsHitByUV(Vector<double> controlPoint, Point p, CoordTransformations ct)
+        private bool IsHitByUV(Vector<double> controlPoint, Point p)
         {
             Vector<double> xyMatrix = ct.FromUVtoXYVectorDouble(p);
             PointF xyPoint = new((float)xyMatrix[0] - 2, (float)xyMatrix[1] - 2);
@@ -160,7 +160,8 @@ namespace Editor2D.Drawing2DMath
         /// Prepocitanie krivky podla potreby
         /// </summary>
         protected abstract void RecalculateCurve();
-        public abstract Vector GetPointAndAngleOnCurve(float time, out float angle);
+
+        public abstract Vector<double> GetPointAndAngleOnCurve(float time, out float angle);
 
         #region Public methods
 
@@ -200,11 +201,11 @@ namespace Editor2D.Drawing2DMath
         /// <summary>
         /// Get vertex ID by U, V coordinates
         /// </summary>
-        public int? GetVertexIDByUV(Point p, CoordTransformations ct)
+        public int? GetVertexIDByUV(Point p)
         {
             for (int i = controlPoints.Count - 1; i >= 0; i--)
             {
-                if (IsHitByUV(controlPoints[i], p, ct))
+                if (IsHitByUV(controlPoints[i], p))
                     return i;
             }
             return null;

@@ -1,22 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MathNet.Numerics.LinearAlgebra;
 
-namespace Editor2D.Drawing2DMath
+namespace LineDetection.GraphicalObjects
 {
     public static class DeCasteljau
     {
         /// <summary>
         /// GetCurvePoints
         /// </summary>
-        public static List<Matrix> GetCurvePoints(BezierCurve curve, int pointCount)
+        public static List<Vector<double>>? GetCurvePoints(BezierCurve? curve, int pointCount)
         {
+            if (curve == null)
+                throw new ArgumentNullException(nameof(curve));
+
             return GetCurvePoints(curve.ControlPoints, pointCount);
         }
 
         /// <summary>
         /// GetCurvePoints
         /// </summary>
-        public static List<Matrix> GetCurvePoints(List<Matrix> bezierCurvePoints, int pointCount)
+        public static List<Vector<double>>? GetCurvePoints(List<Vector<double>> bezierCurvePoints, int pointCount)
         {
             if (pointCount < 2)
                 throw new ApplicationException($"Invalid parameter: you must request at least 2 points to be returned from the curve!");
@@ -24,7 +26,7 @@ namespace Editor2D.Drawing2DMath
             if (bezierCurvePoints == null || bezierCurvePoints.Count < 2)
                 return null;
 
-            var result = new Matrix[pointCount];
+            var result = new Vector<double>[pointCount];
 
             for (int i = 0; i < pointCount; i++)
             {
@@ -35,18 +37,18 @@ namespace Editor2D.Drawing2DMath
                 else
                     time = i / (float)(pointCount - 1);
 
-                Matrix point = GetDeCasteljauPoint(bezierCurvePoints, time, out _);
+                Vector<double> point = GetDeCasteljauPoint(bezierCurvePoints, time, out _);
 
                 result[i] = point;
             }
 
-            return new List<Matrix>(result);
+            return new List<Vector<double>>(result);
         }
 
         /// <summary>
         /// GetDeCasteljauPoint
         /// </summary>
-        public static Matrix GetDeCasteljauPoint(List<Matrix> points, float time, out float angle)
+        public static Vector<double> GetDeCasteljauPoint(List<Vector<double>> points, float time, out float angle)
         {
             angle = 0;
             var currentPoints = points;
@@ -62,11 +64,11 @@ namespace Editor2D.Drawing2DMath
 
                     var diff = point2 - point1;
 
-                    angle = (float)Math.Atan2(diff[1, 0], diff[0, 0]);
+                    angle = (float)Math.Atan2(diff[1], diff[0]);
                 }
 
                 // Calculate non-recursively a new list of points. This list will contain 1 less point than the previous list
-                var newPoints = new List<Matrix>(currentPoints.Count - 1);
+                var newPoints = new List<Vector<double>>(currentPoints.Count - 1);
 
                 for (int i = 0; i < currentPoints.Count - 1; i++)
                 {

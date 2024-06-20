@@ -59,23 +59,34 @@ namespace LineDetection.Tools
         /// <summary>
         /// GetUVF
         /// </summary>
-        public PointF GetUVF(Vector<float> v)
+        public PointF GetUVF(Vector<double> v)
         {
             if (v == null || v.Count != 3)
                 throw new ApplicationException($"Wrong vertex data input!");
 
 
-            return new PointF((v[0] - Xmin) / (Xmax - Xmin) * (Umax - Umin) + Umin,
-                              (v[1] - Ymin) / (Ymax - Ymin) * (Vmax - Vmin) + Vmin);
+            return new PointF(((float)v[0] - Xmin) / (Xmax - Xmin) * (Umax - Umin) + Umin,
+                              ((float)v[1] - Ymin) / (Ymax - Ymin) * (Vmax - Vmin) + Vmin);
         }
 
         /// <summary>
         /// GetUV
         /// </summary>
-        public Point GetUV(Vector<float> v)
+        public Point GetUV(Vector<double> v)
         {
             PointF p = GetUVF(v);
             return new Point((int)Math.Round(p.X), (int)Math.Round(p.Y));
+        }
+
+        /// <summary>
+        /// Calculates distance between two points
+        /// </summary>
+        public double CalculateDistanceBetweenPoints(Vector<double> point1, Vector<double> point2)
+        {
+            double deltaX = Math.Abs(point1[0] - point2[0]);
+            double deltaY = Math.Abs(point1[1] - point2[1]);
+
+            return Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY));
         }
     }
 }

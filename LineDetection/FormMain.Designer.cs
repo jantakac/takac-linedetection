@@ -35,6 +35,7 @@
             buttonRefresh = new Button();
             label5 = new Label();
             checkBoxSobelEdge = new CheckBox();
+            checkBoxFitBezier = new CheckBox();
             checkBoxHistogram = new CheckBox();
             numericUpDownWidth = new NumericUpDown();
             numericUpDownHeight = new NumericUpDown();
@@ -51,7 +52,6 @@
             doubleBufferedPanel = new Tools.DoubleBufferedPanel();
             panelBottomText = new Panel();
             textBoxMessages = new TextBox();
-            checkBoxFitBezier = new CheckBox();
             menuStrip1.SuspendLayout();
             panelLeft.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownWidth).BeginInit();
@@ -140,10 +140,21 @@
             checkBoxSobelEdge.UseVisualStyleBackColor = true;
             checkBoxSobelEdge.CheckedChanged += CheckBoxSobelEdge_CheckedChanged;
             // 
+            // checkBoxFitBezier
+            // 
+            checkBoxFitBezier.AutoSize = true;
+            checkBoxFitBezier.Location = new Point(5, 246);
+            checkBoxFitBezier.Name = "checkBoxFitBezier";
+            checkBoxFitBezier.Size = new Size(137, 19);
+            checkBoxFitBezier.TabIndex = 8;
+            checkBoxFitBezier.Text = "Fit Bezier cubic curve";
+            checkBoxFitBezier.UseVisualStyleBackColor = true;
+            checkBoxFitBezier.CheckedChanged += CheckBoxFitBezier_CheckedChanged;
+            // 
             // checkBoxHistogram
             // 
             checkBoxHistogram.AutoSize = true;
-            checkBoxHistogram.Location = new Point(3, 280);
+            checkBoxHistogram.Location = new Point(5, 280);
             checkBoxHistogram.Name = "checkBoxHistogram";
             checkBoxHistogram.Size = new Size(117, 19);
             checkBoxHistogram.TabIndex = 8;
@@ -301,17 +312,6 @@
             textBoxMessages.Size = new Size(1169, 157);
             textBoxMessages.TabIndex = 0;
             // 
-            // checkBoxFitBezier
-            // 
-            checkBoxFitBezier.AutoSize = true;
-            checkBoxFitBezier.Location = new Point(5, 246);
-            checkBoxFitBezier.Name = "checkBoxFitBezier";
-            checkBoxFitBezier.Size = new Size(137, 19);
-            checkBoxFitBezier.TabIndex = 8;
-            checkBoxFitBezier.Text = "Fit Bezier cubic curve";
-            checkBoxFitBezier.UseVisualStyleBackColor = true;
-            checkBoxFitBezier.CheckedChanged += CheckBoxFitBezier_CheckedChanged;
-            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -353,8 +353,6 @@
         private Label label1;
         private Label label3;
         private Label label2;
-        private TextBox textBoxHeight;
-        private TextBox textBoxWidth;
         private NumericUpDown numericUpDownRadius;
         private Label label4;
         private CheckBox checkBoxGaussianBlur;
