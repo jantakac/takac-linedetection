@@ -79,7 +79,7 @@ namespace LineDetection.GraphicalObjects
                     // Calculate a point in between, aligned by the time.
                     // If time == 0, result is point1
                     // If time == 1, result is point2
-                    var resultPoint = point1 * (1 - time) + point2 * time;
+                    var resultPoint = point1.Multiply(1 - time) + point2.Multiply(time);
 
                     newPoints.Add(resultPoint);
                 }

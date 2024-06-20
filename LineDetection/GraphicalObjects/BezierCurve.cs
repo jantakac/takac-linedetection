@@ -36,7 +36,7 @@ namespace LineDetection.GraphicalObjects
         /// <summary>
         /// GetPointAndAngleOnCurve
         /// </summary>
-		public override Vector<double> GetPointAndAngleOnCurve(float time, out float angle)
+		public override Vector<double> GetPointAndAngleOnCurve(double time, out double angle)
         {
             return DeCasteljau.GetDeCasteljauPoint(controlPoints, time, out angle);
         }

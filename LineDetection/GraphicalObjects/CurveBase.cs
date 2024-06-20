@@ -166,7 +166,7 @@ namespace LineDetection.GraphicalObjects
         /// </summary>
         protected abstract void RecalculateCurve();
 
-        public abstract Vector<double> GetPointAndAngleOnCurve(float time, out float angle);
+        public abstract Vector<double> GetPointAndAngleOnCurve(double time, out double angle);
 
         #region Public methods
 
