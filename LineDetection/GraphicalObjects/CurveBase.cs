@@ -136,11 +136,16 @@ namespace LineDetection.GraphicalObjects
         /// </summary>
         public CurveBase(List<Vector<double>> parControlPoints, CoordTransformations parCoordTrans)
         {
+            if (parControlPoints.Count < 4)
+                throw new ArgumentException("Control points error");
+
             controlPoints = parControlPoints;
             segmentLengths = [];
             curvePoints = [];
             SelectedControlPointIndices = [];
-            ct = parCoordTrans; 
+            ct = parCoordTrans;
+
+            RecalculateCurve();
         }
 
         #endregion

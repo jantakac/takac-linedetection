@@ -62,6 +62,9 @@ namespace LineDetection
                     }
                 }
 
+                // draw fitted bezier curve
+                bezierCurve?.Draw(gb);
+
                 g.DrawImage(bitmap, new Point(imageWidth + 50, 0));
             }
 

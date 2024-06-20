@@ -48,7 +48,7 @@ namespace LineDetection.GraphicalObjects
         /// <summary>
         /// GetDeCasteljauPoint
         /// </summary>
-        public static Vector<double> GetDeCasteljauPoint(List<Vector<double>> points, float time, out float angle)
+        public static Vector<double> GetDeCasteljauPoint(List<Vector<double>> points, double time, out double angle)
         {
             angle = 0;
             var currentPoints = points;

@@ -191,7 +191,7 @@
             numericUpDownStep.Name = "numericUpDownStep";
             numericUpDownStep.Size = new Size(80, 23);
             numericUpDownStep.TabIndex = 7;
-            numericUpDownStep.Value = new decimal(new int[] { 25, 0, 0, 0 });
+            numericUpDownStep.Value = new decimal(new int[] { 85, 0, 0, 0 });
             numericUpDownStep.ValueChanged += NumericUpDownRadius_ValueChanged;
             // 
             // numericUpDownRadius
