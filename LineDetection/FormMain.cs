@@ -135,7 +135,7 @@ namespace LineDetection
         {
             stopwatch.Start();
 
-            string path = @"C:\\Users\\Michal Lekýr\\Desktop\\GrayscaleImages";
+            string path = @"C:\\Users\\HP\\Desktop\\GrayscaleImages";
             DataTable table = new();
             table.Columns.Add("File Name");
             table.Columns.Add("File Path");
@@ -244,18 +244,18 @@ namespace LineDetection
 
             if (checkBoxFitBezier.Checked && curvePoints != null && curvePoints.Length > 3)
             {
-                Vector<double>[] floatPoints = new Vector<double>[curvePoints.Length / 2];
-
-                int j = 0; 
+                List<Vector<double>> floatPoints = [];
 
                 for (int i = 0; i < curvePoints.Length; i+=2)
                 {
-                    floatPoints[j++] = coordTransformations.FromUVtoXYVectorDouble(new Point(curvePoints[i], curvePoints[i+1]));
+                    floatPoints.Add(coordTransformations.FromUVtoXYVectorDouble(new Point(curvePoints[i], curvePoints[i+1])));
                 }
+
+                floatPoints.Reverse();
 
                 stopwatch.Start();
 
-                Vector<double>[] controlPoints = BezierCurveFitting.FitCubicBezier(floatPoints);
+                Vector<double>[] controlPoints = BezierCurveFitting.FitCubicBezier(floatPoints.ToArray());
 
                 if (controlPoints != null)
                     bezierCurve = new([.. controlPoints], coordTransformations);

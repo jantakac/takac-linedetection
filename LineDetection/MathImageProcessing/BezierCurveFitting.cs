@@ -59,8 +59,8 @@ namespace LineDetection.MathImageProcessing
             return
             [
                 P0,
-                Vector<double>.Build.DenseOfArray([P1P2X[0], P1P2Y[0]]),
-                Vector<double>.Build.DenseOfArray([P1P2X[1], P1P2Y[1]]),
+                Vector<double>.Build.DenseOfArray([P1P2X[0], P1P2Y[0], 0]),
+                Vector<double>.Build.DenseOfArray([P1P2X[1], P1P2Y[1], 0]),
                 P3,
             ];
         }

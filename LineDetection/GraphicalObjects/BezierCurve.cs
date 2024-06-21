@@ -56,13 +56,13 @@ namespace LineDetection.GraphicalObjects
                 PointF point2 = ct.GetUVF(curvePoints[i + 1]);
 
                 g.DrawLine(Pens.Pink, point1, point2);
-                DrawingPrimitives.DrawAntialiasedDot(g, point1, Color.Crimson);
+                DrawingPrimitives.DrawAntialiasedDot(g, point1, Color.LimeGreen);
             }
 
             // Draw lines between control points for better visibility
-            float[] dashValues = { 10, 6 };
+            float[] dashValues = [10, 6];
 
-            using (Pen pen = new Pen(Color.LightGray))
+            using (Pen pen = new(Color.LightGray))
             {
                 for (int i = 0; i < controlPoints.Count - 1; i++)
                 {
@@ -75,35 +75,33 @@ namespace LineDetection.GraphicalObjects
             }
 
             // Draw control point anchors
-            using (var font = new Font("Arial", 10))
+            using var font = new Font("Arial", 10);
+            // Draw first control point
+            Point controlPoint = ct.GetUV(controlPoints[0]);
+            Point point = new(controlPoint.X - 5, controlPoint.Y - 5);
+            Rectangle rect = new(point, new Size(10, 10));
+            g.FillRectangle(ControlPointIsSelected(0) ? Brushes.LimeGreen : Brushes.OrangeRed, rect);
+            g.DrawRectangle(Pens.Black, rect);
+            g.DrawString("V start", font, Brushes.Orange, new Point(rect.X + 10, rect.Y - 10));
+
+            // Draw intermediate control points
+            for (int i = 1; i < controlPoints.Count - 1; i++)
             {
-                // Draw first control point
-                Point controlPoint = ct.GetUV(controlPoints[0]);
-                Point point = new Point(controlPoint.X - 5, controlPoint.Y - 5);
-                Rectangle rect = new Rectangle(point, new Size(10, 10));
-                g.FillRectangle(ControlPointIsSelected(0) ? Brushes.LimeGreen : Brushes.OrangeRed, rect);
-                g.DrawRectangle(Pens.Black, rect);
-                g.DrawString("V start", font, Brushes.Black, new Point(rect.X + 10, rect.Y + 10));
-
-                // Draw intermediate control points
-                for (int i = 1; i < controlPoints.Count - 1; i++)
-                {
-                    controlPoint = ct.GetUV(controlPoints[i]);
-                    point = new Point(controlPoint.X - 5, controlPoint.Y - 5);
-                    rect = new Rectangle(point, new Size(10, 10));
-                    g.FillRectangle(ControlPointIsSelected(i) ? Brushes.LimeGreen : Brushes.DarkOrange, rect);
-                    g.DrawRectangle(Pens.Black, rect);
-                    g.DrawString("C" + i.ToString(), font, Brushes.Black, new Point(rect.X + 10, rect.Y + 10));
-                }
-
-                // Draw last control point
-                controlPoint = ct.GetUV(controlPoints[controlPoints.Count - 1]);
+                controlPoint = ct.GetUV(controlPoints[i]);
                 point = new Point(controlPoint.X - 5, controlPoint.Y - 5);
                 rect = new Rectangle(point, new Size(10, 10));
-                g.FillRectangle(ControlPointIsSelected(controlPoints.Count - 1) ? Brushes.LimeGreen : Brushes.OrangeRed, rect);
+                g.FillRectangle(ControlPointIsSelected(i) ? Brushes.LimeGreen : Brushes.DarkOrange, rect);
                 g.DrawRectangle(Pens.Black, rect);
-                g.DrawString("V end", font, Brushes.Black, new Point(rect.X + 10, rect.Y + 10));
+                g.DrawString("C" + i.ToString(), font, Brushes.Orange, new Point(rect.X + 10, rect.Y + 10));
             }
+
+            // Draw last control point
+            controlPoint = ct.GetUV(controlPoints[controlPoints.Count - 1]);
+            point = new Point(controlPoint.X - 5, controlPoint.Y - 5);
+            rect = new Rectangle(point, new Size(10, 10));
+            g.FillRectangle(ControlPointIsSelected(controlPoints.Count - 1) ? Brushes.LimeGreen : Brushes.OrangeRed, rect);
+            g.DrawRectangle(Pens.Black, rect);
+            g.DrawString("V end", font, Brushes.Orange, new Point(rect.X + 10, rect.Y + 10));
         }
     }
 }
