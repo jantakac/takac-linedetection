@@ -278,7 +278,7 @@
             panelDrawing.Dock = DockStyle.Fill;
             panelDrawing.Location = new Point(275, 24);
             panelDrawing.Name = "panelDrawing";
-            panelDrawing.Size = new Size(1169, 803);
+            panelDrawing.Size = new Size(1169, 835);
             panelDrawing.TabIndex = 2;
             // 
             // doubleBufferedPanel
@@ -288,7 +288,7 @@
             doubleBufferedPanel.Dock = DockStyle.Fill;
             doubleBufferedPanel.Location = new Point(0, 0);
             doubleBufferedPanel.Name = "doubleBufferedPanel";
-            doubleBufferedPanel.Size = new Size(1169, 803);
+            doubleBufferedPanel.Size = new Size(1169, 835);
             doubleBufferedPanel.TabIndex = 0;
             doubleBufferedPanel.Paint += DoubleBufferedPanel_Paint;
             // 
@@ -296,9 +296,9 @@
             // 
             panelBottomText.Controls.Add(textBoxMessages);
             panelBottomText.Dock = DockStyle.Bottom;
-            panelBottomText.Location = new Point(275, 827);
+            panelBottomText.Location = new Point(275, 859);
             panelBottomText.Name = "panelBottomText";
-            panelBottomText.Size = new Size(1169, 157);
+            panelBottomText.Size = new Size(1169, 125);
             panelBottomText.TabIndex = 0;
             // 
             // textBoxMessages
@@ -309,7 +309,7 @@
             textBoxMessages.Multiline = true;
             textBoxMessages.Name = "textBoxMessages";
             textBoxMessages.ScrollBars = ScrollBars.Horizontal;
-            textBoxMessages.Size = new Size(1169, 157);
+            textBoxMessages.Size = new Size(1169, 125);
             textBoxMessages.TabIndex = 0;
             // 
             // FormMain
