@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using MathNet.Numerics.LinearAlgebra;
 using LineDetection.GraphicalObjects;
+using System.Drawing;
 
 namespace LineDetection
 {
@@ -46,6 +47,14 @@ namespace LineDetection
             {
                 using Bitmap bitmap = baseImage.ToBitmap();
                 g.DrawImage(bitmap, new Point(0, 0));
+
+                if (checkBoxHistogram.Checked)
+                {
+                    using Bitmap? histogramBitpam = DrawHistogram(baseImage);
+
+                    if (histogramBitpam != null)
+                        g.DrawImage(histogramBitpam, new Point(0, imageHeight));
+                }
             }
 
             if (processedImage != null)
@@ -66,58 +75,61 @@ namespace LineDetection
                 bezierCurve?.Draw(gb);
 
                 g.DrawImage(bitmap, new Point(imageWidth + 50, 0));
-            }
 
-            if (checkBoxHistogram.Checked)
+                if (checkBoxHistogram.Checked)
+                {
+                    using Bitmap? histogramBitpam = DrawHistogram(processedImage);
+
+                    if (histogramBitpam != null)
+                        g.DrawImage(histogramBitpam, new Point(imageWidth + 50, imageHeight));
+                }
+            }
+        }
+
+        /// <summary>
+        /// DrawHistogram
+        /// </summary>
+        private static Bitmap? DrawHistogram(GrayscaleByteImage parImage)
+        {
+            if (parImage == null)
+                return null;
+
+            double[] histogramBase = parImage.Histogram;
+
+            double min = histogramBase.Min();
+            double max = histogramBase.Max();
+            double range = max - min;
+
+
+            Bitmap bitmap = new(512, 320);
+
+            // histogram processedImage
+            for (int x = 0; x < histogramBase.Length; x++)
             {
-                if (baseImage != null)
+                int ymax = (int)Math.Round(histogramBase[x] / range * 300.0 + min);
+
+                for (int y = 0; y < ymax; y++)
                 {
-                    double[] histogramBase = baseImage.Histogram;
-                    using Bitmap bitmap = new(2 * histogramBase.Length, 320);
-
-                    // histogram processedImage
-                    for (int x = 0; x < histogramBase.Length; x++)
-                    {
-                        for (int y = 0; y < (int)(histogramBase[x] * 300.0); y++)
-                        {
-                            bitmap.SetPixel(2 * x, y + 14, Color.OrangeRed);
-                            bitmap.SetPixel(2 * x + 1, y + 14, Color.OrangeRed);
-                        }
-                    }
-
-                    bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-
-                    using Graphics gb = Graphics.FromImage(bitmap);
-                    gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 15), new Point(bitmap.Width, bitmap.Height - 15));
-                    gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 16), new Point(bitmap.Width, bitmap.Height - 16));
-
-                    g.DrawImage(bitmap, new Point(0, imageHeight));
-                }
-
-                if (processedImage != null)
-                {
-                    double[] histogramProcessed = processedImage.Histogram;
-                    using Bitmap bitmap = new(2 * histogramProcessed.Length, 320);
-
-                    // histogram processedImage
-                    for (int x = 0; x < histogramProcessed.Length; x++)
-                    {
-                        for (int y = 0; y < (int)(histogramProcessed[x] * 300.0); y++)
-                        {
-                            bitmap.SetPixel(2 * x, y + 14, Color.Green);
-                            bitmap.SetPixel(2 * x + 1, y + 14, Color.Green);
-                        }
-                    }
-
-                    bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
-
-                    using Graphics gb = Graphics.FromImage(bitmap);
-                    gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 15), new Point(bitmap.Width, bitmap.Height - 15));
-                    gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 16), new Point(bitmap.Width, bitmap.Height - 16));
-
-                    g.DrawImage(bitmap, new Point(imageWidth + 50, imageHeight));
+                    bitmap.SetPixel(2 * x, y + 14, Color.Green);
+                    bitmap.SetPixel(2 * x + 1, y + 14, Color.Green);
                 }
             }
+
+            bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+
+            using Graphics gb = Graphics.FromImage(bitmap);
+            gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 15), new Point(bitmap.Width, bitmap.Height - 15));
+            gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 16), new Point(bitmap.Width, bitmap.Height - 16));
+
+            using Font f = new("Arial Narrow", 8);
+
+            for (int x = 0; x < bitmap.Width; x += 20)
+            {
+                gb.DrawLine(Pens.Gray, new Point(x, bitmap.Height - 14), new Point(x, bitmap.Height - 6));
+                gb.DrawString((x / 2).ToString() , f, Brushes.Gray, new PointF(x, bitmap.Height - 14));
+            }
+
+            return bitmap;
         }
 
         /// <summary>
@@ -135,7 +147,8 @@ namespace LineDetection
         {
             stopwatch.Start();
 
-            string path = @"C:\\Users\\HP\\Desktop\\GrayscaleImages";
+            // string path = @"C:\\Users\\HP\\Desktop\\GrayscaleImages";
+            string path = @"C:\\Users\\Michal Lekýr\\Desktop\\GrayscaleImages";
             DataTable table = new();
             table.Columns.Add("File Name");
             table.Columns.Add("File Path");
