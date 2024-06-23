@@ -5,7 +5,6 @@ using System.Data;
 using System.Diagnostics;
 using MathNet.Numerics.LinearAlgebra;
 using LineDetection.GraphicalObjects;
-using System.Drawing;
 
 namespace LineDetection
 {
@@ -132,13 +131,7 @@ namespace LineDetection
             return bitmap;
         }
 
-        /// <summary>
-        /// comboBox1_SelectedIndexChanged
-        /// </summary>
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            ReloadAndDisplay();
-        }
+
 
         /// <summary>
         /// FormMain_Load
@@ -282,6 +275,11 @@ namespace LineDetection
 
             // repaint drawing
             doubleBufferedPanel.Invalidate();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ReloadAndDisplay();
         }
 
         private void CheckBoxOtsuTreshold_CheckedChanged(object sender, EventArgs e)
