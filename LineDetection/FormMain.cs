@@ -1,4 +1,3 @@
-using LineDetection.DrawingClasses;
 using LineDetection.MathImageProcessing;
 using LineDetection.Tools;
 using System.Data;
@@ -14,14 +13,14 @@ namespace LineDetection
 
         private int imageWidth;
         private int imageHeight;
-        private int radius;
-        private int step; 
+        private double sigma;
+        private int step;
         private int[]? curvePoints;
-        
+
         private GrayscaleByteImage? baseImage;
         private GrayscaleByteImage? processedImage;
         private CoordTransformations? coordTransformations;
-        private BezierCurve? bezierCurve; 
+        private BezierCurve? bezierCurve;
 
         public FormMain()
         {
@@ -65,7 +64,7 @@ namespace LineDetection
                 {
                     for (int i = 0; i < curvePoints.Length; i += 2)
                     {
-                        Rectangle r = new(new Point(curvePoints[i]-2, curvePoints[i + 1]-2), new Size(4, 4));
+                        Rectangle r = new(new Point(curvePoints[i] - 2, curvePoints[i + 1] - 2), new Size(4, 4));
                         gb.FillRectangle(Brushes.Yellow, r);
                     }
                 }
@@ -129,7 +128,7 @@ namespace LineDetection
             for (int x = 0; x < bitmap.Width; x += 20)
             {
                 gb.DrawLine(Pens.Gray, new Point(x, bitmap.Height - 14), new Point(x, bitmap.Height - 6));
-                gb.DrawString((x / 2).ToString() , f, Brushes.Gray, new PointF(x, bitmap.Height - 14));
+                gb.DrawString((x / 2).ToString(), f, Brushes.Gray, new PointF(x, bitmap.Height - 14));
             }
 
             return bitmap;
@@ -177,7 +176,7 @@ namespace LineDetection
             baseImage = null;
             processedImage = null;
             curvePoints = null;
-            bezierCurve = null; 
+            bezierCurve = null;
 
             Stopwatch stopwatch = new();
 
@@ -203,7 +202,10 @@ namespace LineDetection
 
             imageWidth = (int)numericUpDownWidth.Value;
             imageHeight = (int)numericUpDownHeight.Value;
-            radius = (int)numericUpDownRadius.Value;
+
+            if (!double.TryParse(textBoxSigma.Text, out sigma))
+                sigma = 1.5;
+
             step = (int)numericUpDownStep.Value;
 
             baseImage = new GrayscaleByteImage(imageWidth, imageHeight);
@@ -212,15 +214,17 @@ namespace LineDetection
             {
                 for (int x = 0; x < imageWidth; x++)
                 {
-                    baseImage.Data[x + imageWidth * y] = imageBytes[x + imageWidth * y];
+                    baseImage.Data[x, y] = imageBytes[x + imageWidth * y];
                 }
             }
 
             if (checkBoxGaussianBlur.Checked)
             {
+                GaussianBlur.Sigma = sigma;
+
                 stopwatch.Start();
 
-                processedImage = GaussianBlurGrayscale.Process(baseImage, radius);
+                processedImage = new GrayscaleByteImage(GaussianBlur.ApplyFilter(baseImage.Data, baseImage.Width, baseImage.Height), baseImage.Width, baseImage.Height);
 
                 stopwatch.Stop();
                 TimeSpan elapsedTime = stopwatch.Elapsed;
@@ -255,9 +259,9 @@ namespace LineDetection
             {
                 List<Vector<double>> floatPoints = [];
 
-                for (int i = 0; i < curvePoints.Length; i+=2)
+                for (int i = 0; i < curvePoints.Length; i += 2)
                 {
-                    floatPoints.Add(coordTransformations.FromUVtoXYVectorDouble(new Point(curvePoints[i], curvePoints[i+1])));
+                    floatPoints.Add(coordTransformations.FromUVtoXYVectorDouble(new Point(curvePoints[i], curvePoints[i + 1])));
                 }
 
                 floatPoints.Reverse();
@@ -277,7 +281,7 @@ namespace LineDetection
             textBoxMessages.AppendText("\r\n");
 
             // repaint drawing
-            doubleBufferedPanel.Invalidate();
+            doubleBufferedPanelDrawing.Invalidate();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -328,6 +332,53 @@ namespace LineDetection
         private void ButtonRefresh_Click(object sender, EventArgs e)
         {
             ReloadAndDisplay();
+        }
+
+        private void DoubleBufferedPanelDrawing_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+
+            if (baseImage != null)
+            {
+                using Bitmap bitmap = baseImage.ToBitmap();
+                g.DrawImage(bitmap, new Point(0, 0));
+
+                if (checkBoxHistogram.Checked)
+                {
+                    using Bitmap? histogramBitpam = DrawHistogram(baseImage);
+
+                    if (histogramBitpam != null)
+                        g.DrawImage(histogramBitpam, new Point(0, imageHeight));
+                }
+            }
+
+            if (processedImage != null)
+            {
+                using Bitmap bitmap = processedImage.ToBitmap();
+                using Graphics gb = Graphics.FromImage(bitmap);
+
+                if (curvePoints != null)
+                {
+                    for (int i = 0; i < curvePoints.Length; i += 2)
+                    {
+                        Rectangle r = new(new Point(curvePoints[i] - 2, curvePoints[i + 1] - 2), new Size(4, 4));
+                        gb.FillRectangle(Brushes.Yellow, r);
+                    }
+                }
+
+                // draw fitted bezier curve
+                bezierCurve?.Draw(gb);
+
+                g.DrawImage(bitmap, new Point(imageWidth + 50, 0));
+
+                if (checkBoxHistogram.Checked)
+                {
+                    using Bitmap? histogramBitpam = DrawHistogram(processedImage);
+
+                    if (histogramBitpam != null)
+                        g.DrawImage(histogramBitpam, new Point(imageWidth + 50, imageHeight));
+                }
+            }
         }
     }
 }

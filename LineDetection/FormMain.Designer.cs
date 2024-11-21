@@ -32,6 +32,7 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             panelLeft = new Panel();
+            textBoxSigma = new TextBox();
             buttonRefresh = new Button();
             label5 = new Label();
             checkBoxSobelEdge = new CheckBox();
@@ -40,7 +41,6 @@
             numericUpDownWidth = new NumericUpDown();
             numericUpDownHeight = new NumericUpDown();
             numericUpDownStep = new NumericUpDown();
-            numericUpDownRadius = new NumericUpDown();
             label4 = new Label();
             checkBoxOtsuTreshold = new CheckBox();
             checkBoxGaussianBlur = new CheckBox();
@@ -49,15 +49,14 @@
             label1 = new Label();
             comboBox1 = new ComboBox();
             panelDrawing = new Panel();
-            doubleBufferedPanel = new Tools.DoubleBufferedPanel();
             panelBottomText = new Panel();
             textBoxMessages = new TextBox();
+            doubleBufferedPanelDrawing = new Tools.DoubleBufferedPanel();
             menuStrip1.SuspendLayout();
             panelLeft.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownWidth).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHeight).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownStep).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownRadius).BeginInit();
             panelDrawing.SuspendLayout();
             panelBottomText.SuspendLayout();
             SuspendLayout();
@@ -88,6 +87,7 @@
             // panelLeft
             // 
             panelLeft.BorderStyle = BorderStyle.FixedSingle;
+            panelLeft.Controls.Add(textBoxSigma);
             panelLeft.Controls.Add(buttonRefresh);
             panelLeft.Controls.Add(label5);
             panelLeft.Controls.Add(checkBoxSobelEdge);
@@ -96,7 +96,6 @@
             panelLeft.Controls.Add(numericUpDownWidth);
             panelLeft.Controls.Add(numericUpDownHeight);
             panelLeft.Controls.Add(numericUpDownStep);
-            panelLeft.Controls.Add(numericUpDownRadius);
             panelLeft.Controls.Add(label4);
             panelLeft.Controls.Add(checkBoxOtsuTreshold);
             panelLeft.Controls.Add(checkBoxGaussianBlur);
@@ -109,6 +108,15 @@
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(275, 960);
             panelLeft.TabIndex = 1;
+            // 
+            // textBoxSigma
+            // 
+            textBoxSigma.Location = new Point(186, 141);
+            textBoxSigma.Name = "textBoxSigma";
+            textBoxSigma.Size = new Size(82, 23);
+            textBoxSigma.TabIndex = 12;
+            textBoxSigma.Text = "1.5";
+            textBoxSigma.TextAlign = HorizontalAlignment.Right;
             // 
             // buttonRefresh
             // 
@@ -194,25 +202,14 @@
             numericUpDownStep.Value = new decimal(new int[] { 85, 0, 0, 0 });
             numericUpDownStep.ValueChanged += NumericUpDownRadius_ValueChanged;
             // 
-            // numericUpDownRadius
-            // 
-            numericUpDownRadius.Location = new Point(188, 142);
-            numericUpDownRadius.Maximum = new decimal(new int[] { 50, 0, 0, 0 });
-            numericUpDownRadius.Minimum = new decimal(new int[] { 4, 0, 0, 0 });
-            numericUpDownRadius.Name = "numericUpDownRadius";
-            numericUpDownRadius.Size = new Size(80, 23);
-            numericUpDownRadius.TabIndex = 7;
-            numericUpDownRadius.Value = new decimal(new int[] { 15, 0, 0, 0 });
-            numericUpDownRadius.ValueChanged += NumericUpDownRadius_ValueChanged;
-            // 
             // label4
             // 
             label4.AutoSize = true;
             label4.Location = new Point(140, 144);
             label4.Name = "label4";
-            label4.Size = new Size(42, 15);
+            label4.Size = new Size(40, 15);
             label4.TabIndex = 6;
-            label4.Text = "Radius";
+            label4.Text = "Sigma";
             // 
             // checkBoxOtsuTreshold
             // 
@@ -274,23 +271,12 @@
             // 
             // panelDrawing
             // 
-            panelDrawing.Controls.Add(doubleBufferedPanel);
+            panelDrawing.Controls.Add(doubleBufferedPanelDrawing);
             panelDrawing.Dock = DockStyle.Fill;
             panelDrawing.Location = new Point(275, 24);
             panelDrawing.Name = "panelDrawing";
             panelDrawing.Size = new Size(1169, 835);
-            panelDrawing.TabIndex = 2;
-            // 
-            // doubleBufferedPanel
-            // 
-            doubleBufferedPanel.BackColor = Color.White;
-            doubleBufferedPanel.BorderStyle = BorderStyle.FixedSingle;
-            doubleBufferedPanel.Dock = DockStyle.Fill;
-            doubleBufferedPanel.Location = new Point(0, 0);
-            doubleBufferedPanel.Name = "doubleBufferedPanel";
-            doubleBufferedPanel.Size = new Size(1169, 835);
-            doubleBufferedPanel.TabIndex = 0;
-            doubleBufferedPanel.Paint += DoubleBufferedPanel_Paint;
+            panelDrawing.TabIndex = 0;
             // 
             // panelBottomText
             // 
@@ -311,6 +297,15 @@
             textBoxMessages.ScrollBars = ScrollBars.Horizontal;
             textBoxMessages.Size = new Size(1169, 125);
             textBoxMessages.TabIndex = 0;
+            // 
+            // doubleBufferedPanelDrawing
+            // 
+            doubleBufferedPanelDrawing.Dock = DockStyle.Fill;
+            doubleBufferedPanelDrawing.Location = new Point(0, 0);
+            doubleBufferedPanelDrawing.Name = "doubleBufferedPanelDrawing";
+            doubleBufferedPanelDrawing.Size = new Size(1169, 835);
+            doubleBufferedPanelDrawing.TabIndex = 0;
+            doubleBufferedPanelDrawing.Paint += DoubleBufferedPanelDrawing_Paint;
             // 
             // FormMain
             // 
@@ -333,7 +328,6 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDownWidth).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHeight).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownStep).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownRadius).EndInit();
             panelDrawing.ResumeLayout(false);
             panelBottomText.ResumeLayout(false);
             panelBottomText.PerformLayout();
@@ -348,12 +342,10 @@
         private ToolStripMenuItem exitToolStripMenuItem;
         private Panel panelLeft;
         private Panel panelDrawing;
-        private Tools.DoubleBufferedPanel doubleBufferedPanel;
         private ComboBox comboBox1;
         private Label label1;
         private Label label3;
         private Label label2;
-        private NumericUpDown numericUpDownRadius;
         private Label label4;
         private CheckBox checkBoxGaussianBlur;
         private NumericUpDown numericUpDownWidth;
@@ -367,5 +359,7 @@
         private TextBox textBoxMessages;
         private Button buttonRefresh;
         private CheckBox checkBoxFitBezier;
+        private TextBox textBoxSigma;
+        private Tools.DoubleBufferedPanel doubleBufferedPanelDrawing;
     }
 }

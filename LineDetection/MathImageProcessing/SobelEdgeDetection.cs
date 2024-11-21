@@ -8,22 +8,18 @@
 
             List<int> result = [];
 
-            int indexLeft = 0; 
-            int indexRight = 0;
-            int edgeCount = 0;
+            int indexLeft = 0;
 
             // apply tresholding
-            for (int j = 0; j < parImage.Height; j += parStep)
+            for (int y = 0; y < parImage.Height; y += parStep)
             {
-                edgeCount = 0; 
+                int edgeCount = 0;
 
-                for (int i = 4; i < parImage.Width - 4; i++)
+                for (int x = 4; x < parImage.Width - 4; x++)
                 {
-                    int index = i + j * parImage.Width;
-
                     // sobel kernel for line
-                    int sum = parImage.Data[index - 3] * -1 + parImage.Data[index - 2] * -1 + parImage.Data[index - 1] * -1 +
-                        parImage.Data[index] + parImage.Data[index + 1] + parImage.Data[index - 2];
+                    int sum = parImage.Data[x - 3,y] * -1 + parImage.Data[x - 2,y] * -1 + parImage.Data[x - 1,y] * -1 +
+                        parImage.Data[x,y] + parImage.Data[x + 1,y] + parImage.Data[x + 2,y];
 
                     if (sum <= -510 || sum >= 510)
                     {
@@ -31,14 +27,14 @@
 
                         if (edgeCount == 1)
                         {
-                            indexLeft = i; 
+                            indexLeft = x; 
                         }
                         if (edgeCount == 2)
                         {
-                            indexRight = i;
+                            int indexRight = x;
 
                             result.Add((int)Math.Round(0.5 * (indexRight + indexLeft)));
-                            result.Add(j);
+                            result.Add(y);
                             continue; 
                         }
                     }

@@ -25,7 +25,6 @@
             // Step 4: Iterate to find the optimal threshold
             double sumBackground = 0; // Background class sum
             int weightBackground = 0; // Background class weight
-            int weightForeground = 0; // Foreground class weight
 
             double maxVariance = 0;
             int optimalThreshold = 0;
@@ -49,7 +48,7 @@
                     continue;
 
                 // Update foreground weight
-                weightForeground = totalPixels - weightBackground;
+                int weightForeground = totalPixels - weightBackground;
                 if (weightForeground == 0)
                     break;
 
@@ -74,20 +73,18 @@
             GrayscaleByteImage resultImage = new(parImage.Width, parImage.Height);
 
             // apply tresholding
-            for (int j = 0; j < parImage.Height; j++)
+            for (int y = 0; y < parImage.Height; y++)
             {
-                for (int i = 0; i < parImage.Width; i++)
+                for (int x = 0; x < parImage.Width; x++)
                 {
-                    int index = i + j * parImage.Width;
-
                     // set left and right border as white 3px for later sobel edge detection
-                    if (i < 3 || i > parImage.Width - 4)
+                    if (x < 3 || x > parImage.Width - 4)
                     {
-                        resultImage.Data[index] = 255; 
+                        resultImage.Data[x,y] = 255; 
                     }
                     else
                     {
-                        resultImage.Data[index] = (byte)((parImage.Data[index] > optimalThreshold) ? 255 : 0);
+                        resultImage.Data[x, y] = (byte)((parImage.Data[x, y] > optimalThreshold) ? 255 : 0);
                     }
                 }
             }

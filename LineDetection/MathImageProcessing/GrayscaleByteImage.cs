@@ -2,7 +2,7 @@
 {
     public class GrayscaleByteImage
     {
-        private readonly byte[] data;
+        private readonly byte[,] data;
         private readonly int width;
         private readonly int height;
 
@@ -17,7 +17,7 @@
 
         public int Width { get { return width; } }
         public int Height { get { return height; } }
-        public byte[] Data { get { return data; } }
+        public byte[,] Data { get { return data; } }
 
         public int HistogramMinimum { get { return histogramMinimum; } }
         public int HistogramMaximum { get { return histogramMaximum; } }
@@ -33,7 +33,7 @@
         /// <summary>
         /// GrayscaleByteImage constructor 1
         /// </summary>
-        public GrayscaleByteImage(byte[] parData, int parWidth, int parHeight)
+        public GrayscaleByteImage(byte[,] parData, int parWidth, int parHeight)
         {
             ArgumentNullException.ThrowIfNull(parData);
 
@@ -56,7 +56,7 @@
             width = parWidth;
             height = parHeight;
 
-            data = new byte[width * height];
+            data = new byte[width, height];
         }
 
         /// <summary>
@@ -67,9 +67,12 @@
             int histogramMinimum = int.MaxValue;
             int histogramMaximum = int.MinValue;
 
-            for (int i = 0; i < width * height; i++)
+            for (int y = 0; y < height; y++)
             {
-                histogram[data[i]]++;
+                for (int x = 0; x < width; x++)
+                {
+                    histogram[data[x,y]]++;
+                }
             }
 
             // find min and max
@@ -113,7 +116,7 @@
             {
                 for (int x = 0; x < width; x++)
                 {
-                    byte color = data[x + width * y];
+                    byte color = data[x, y];
                     resultBitmap.SetPixel(x, y, Color.FromArgb(color, color, color));
                 }
             }
