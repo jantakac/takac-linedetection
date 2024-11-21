@@ -6,42 +6,68 @@
         {
             ArgumentNullException.ThrowIfNull(parImage);
 
+            parImage.UpdateHistogramData();
+
             // Calculate global mean
-            double[] histogram = parImage.Histogram;
+            int[] histogram = parImage.Histogram;
 
-            double mg = 0;
+            // Step 2: Total number of pixels
+            int totalPixels = parImage.Width * parImage.Height;
 
+            // Step 3: Calculate the sum of all pixel intensities
+            // higher waight is for higher pixel intensities
+            double sumAll = 0;
             for (int i = 0; i < 256; i++)
             {
-                mg += i * histogram[i];
+                sumAll += i * histogram[i];
             }
 
-            //Get max between-class variance
-            double bcv = 0;
-            int threshold = 0;
-            
-            for (int i = 0; i < 256; i++)
+            // Step 4: Iterate to find the optimal threshold
+            double sumBackground = 0; // Background class sum
+            int weightBackground = 0; // Background class weight
+            int weightForeground = 0; // Foreground class weight
+
+            double maxVariance = 0;
+            int optimalThreshold = 0;
+
+            // sigma^2 = Wb * Wf * (miB - miF)^2
+            // Wb - weight background
+            // Wf - weight forground
+            // finally we choose the greatest value of sigma^2
+            // and separate the pixels to two bins - background and foreground
+
+            for (int t = 0; t < 256; t++)
             {
-                double cs = 0;
-                double m = 0;
-
-                for (int j = 0; j < i; j++)
-                {
-                    cs += histogram[j];
-                    m += j * histogram[j];
-                }
-
-                if (cs == 0)
-                {
+                // Update background weight and sum
+                // count all intensities, set the boundry to t
+                // less or equal to t is for this iteration considered as background
+                // more than t is considered as foreground
+                // if weight background is 0, no need to compute the between class variance
+                // and it can continue to the next step
+                weightBackground += histogram[t];
+                if (weightBackground == 0)
                     continue;
-                }
 
-                double old_bcv = bcv;
-                bcv = Math.Max(bcv, Math.Pow(mg * cs - m, 2) / (cs * (1 - cs)));
+                // Update foreground weight
+                weightForeground = totalPixels - weightBackground;
+                if (weightForeground == 0)
+                    break;
 
-                if (bcv > old_bcv)
+                // Update background sum
+                sumBackground += t * histogram[t];
+
+                // Calculate means
+                double meanBackground = sumBackground / weightBackground;
+                double meanForeground = (sumAll - sumBackground) / weightForeground;
+
+                // Calculate between-class variance
+                double varianceBetween = weightBackground * weightForeground * Math.Pow(meanBackground - meanForeground, 2);
+
+                // Update maximum variance and threshold
+                if (varianceBetween > maxVariance)
                 {
-                    threshold = i;
+                    maxVariance = varianceBetween;
+                    optimalThreshold = t;
                 }
             }
 
@@ -61,7 +87,7 @@
                     }
                     else
                     {
-                        resultImage.Data[index] = (byte)((parImage.Data[index] > threshold) ? 255 : 0);
+                        resultImage.Data[index] = (byte)((parImage.Data[index] > optimalThreshold) ? 255 : 0);
                     }
                 }
             }

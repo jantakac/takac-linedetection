@@ -93,25 +93,29 @@ namespace LineDetection
             if (parImage == null)
                 return null;
 
-            double[] histogramBase = parImage.Histogram;
-
-            double min = histogramBase.Min();
-            double max = histogramBase.Max();
-            double range = max - min;
-
-
             Bitmap bitmap = new(512, 320);
 
+            parImage.UpdateHistogramData();
+
             // histogram processedImage
-            for (int x = 0; x < histogramBase.Length; x++)
+            for (int x = 0; x < parImage.NormalisedHistogram.Length; x++)
             {
-                int ymax = (int)Math.Round(histogramBase[x] / range * 300.0 + min);
+                int ymax = (int)Math.Round(parImage.NormalisedHistogram[x] * 300.0);
 
                 for (int y = 0; y < ymax; y++)
                 {
                     bitmap.SetPixel(2 * x, y + 14, Color.Green);
                     bitmap.SetPixel(2 * x + 1, y + 14, Color.Green);
                 }
+            }
+
+            // cumulative histogram
+            for (int x = 0; x < parImage.CumulativeNormalisedHistogram.Length; x++)
+            {
+                int y = (int)Math.Round(parImage.CumulativeNormalisedHistogram[x] * 300.0);
+
+                bitmap.SetPixel(2 * x, y + 14, Color.Red);
+                bitmap.SetPixel(2 * x + 1, y + 14, Color.Red);
             }
 
             bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
@@ -132,7 +136,6 @@ namespace LineDetection
         }
 
 
-
         /// <summary>
         /// FormMain_Load
         /// </summary>
@@ -140,8 +143,8 @@ namespace LineDetection
         {
             stopwatch.Start();
 
-            // string path = @"C:\\Users\\HP\\Desktop\\GrayscaleImages";
-            string path = @"C:\\Users\\Michal Lekýr\\Desktop\\GrayscaleImages";
+            string path = @"C:\\Users\\micha\\Desktop\\GrayscaleImages";
+            //string path = @"C:\\Users\\Michal Lekýr\\Desktop\\GrayscaleImages";
             DataTable table = new();
             table.Columns.Add("File Name");
             table.Columns.Add("File Path");
