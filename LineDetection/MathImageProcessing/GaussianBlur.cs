@@ -1,9 +1,11 @@
-﻿namespace LineDetection.MathImageProcessing
+﻿using System;
+
+namespace LineDetection.MathImageProcessing
 {
     public static class GaussianBlur
     {
         private static double sigma = 1.5;
-        private static readonly double[] kernel = [];
+        private static double[] kernel = [];
 
         public static double Sigma 
         { 
@@ -87,18 +89,22 @@
         /// </summary>
         private static void CreateGaussianKernel()
         {
+            if (sigma <= 0.0)
+                throw new ArgumentException("Gaussian blur, parameter sigma out of range!");
+
             // typically 3*sigma for sufficient kernel size
             int radius = (int)Math.Ceiling(3 * sigma); 
             int size = 2 * radius + 1;
 
             double sum = 0;
-            double twoSigmaSquare = 2 * sigma * sigma;
+            double twoSigmaSquare = 2 * Math.Pow(sigma, 2);
 
-            for (int i = 0; i < size; i++)
+            kernel = new double[radius + 1 + radius];
+
+            for (int i = -radius; i <= radius; i++)
             {
-                int x = i - radius;
-                kernel[i] = Math.Exp(-x * x / twoSigmaSquare);
-                sum += kernel[i];
+                kernel[radius + i] = Math.Exp(-(i * i) / twoSigmaSquare) / (Math.PI * twoSigmaSquare);
+                sum += kernel[radius + i];
             }
 
             // Normalize kernel
