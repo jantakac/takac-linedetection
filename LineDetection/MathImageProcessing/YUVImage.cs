@@ -2,7 +2,7 @@
 
 namespace LineDetection.MathImageProcessing
 {
-    public sealed class YUVImage
+    public sealed class YUVImage : ICloneable
     {
         public static readonly int MIN_SIZE = 16;
         public static readonly int MAX_SIZE = 512;
@@ -60,7 +60,7 @@ namespace LineDetection.MathImageProcessing
         /// <param name="parFastLoad">Use unsafe load</param>
         public YUVImage(byte[] parImageBytes, int parWidth, int parHeight)
         {
-            if (width < MIN_SIZE || height < MIN_SIZE || width > MAX_SIZE || height > MAX_SIZE)
+            if (parWidth < MIN_SIZE || parHeight < MIN_SIZE || parWidth > MAX_SIZE || parHeight > MAX_SIZE)
                 throw new ArgumentException("Invalid image size");
 
             if (parImageBytes is null || parImageBytes.Length < 256 || parImageBytes.Length > 262144)
@@ -96,6 +96,60 @@ namespace LineDetection.MathImageProcessing
                 intensityPropabilities[i] = (float)histogram[i] / pixelCount;
                 intensitySum += i * intensityPropabilities[i];
             }
+        }
+
+        /// <summary>
+        /// Return a resized version of the image
+        /// </summary>
+        /// <param name="newWidth">New width</param>
+        /// <param name="newHeight">New height</param>
+        /// <returns></returns>
+        public YUVImage ResizeGrayscaleImageBilinear(int newWidth, int newHeight)
+        {
+            if (newWidth < 8 || newHeight < 8)
+                throw new ArgumentException("Invalid new image size");
+
+            byte[] resized = new byte[newWidth * newHeight];
+
+            // Ratios of old and new dimensions
+            float xRatio = (float)width / newWidth;
+            float yRatio = (float)height / newHeight;
+
+            for (int y = 0; y < newHeight; y++)
+            {
+                for (int x = 0; x < newWidth; x++)
+                {
+                    // Compute positions in the source image
+                    float srcX = x * xRatio;
+                    float srcY = y * yRatio;
+
+                    int x0 = (int)srcX;
+                    int y0 = (int)srcY;
+
+                    int x1 = Math.Min(x0 + 1, width - 1);
+                    int y1 = Math.Min(y0 + 1, height - 1);
+
+                    // Fractional parts for interpolation
+                    float xLerp = srcX - x0;
+                    float yLerp = srcY - y0;
+
+                    // Get the four surrounding pixel values
+                    byte topLeft = bytes[y0 * width + x0];
+                    byte topRight = bytes[y0 * width + x1];
+                    byte bottomLeft = bytes[y1 * width + x0];
+                    byte bottomRight = bytes[y1 * width + x1];
+
+                    // Bilinear interpolation
+                    float top = topLeft + xLerp * (topRight - topLeft);
+                    float bottom = bottomLeft + xLerp * (bottomRight - bottomLeft);
+                    float pixelValue = top + yLerp * (bottom - top);
+
+                    // Assign the interpolated value to the resized image
+                    resized[y * newWidth + x] = (byte)Math.Round(pixelValue);
+                }
+            }
+
+            return new YUVImage(resized, newWidth, newHeight);
         }
 
         /// <summary>
@@ -135,6 +189,15 @@ namespace LineDetection.MathImageProcessing
             bitmap.UnlockBits(bitmapData);
 
             return bitmap;
+        }
+
+        /// <summary>
+        /// Clone of the object
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
+        {
+            return new YUVImage((byte[])bytes.Clone(), width, height);
         }
     }
 }

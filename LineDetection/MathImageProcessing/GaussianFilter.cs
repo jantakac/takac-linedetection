@@ -28,6 +28,37 @@
         }
 
         /// <summary>
+        /// Applies a Gaussian filter to a 1D byte array, returning a new 1D byte array.
+        /// </summary>
+        public static void Apply(YUVImage? image)
+        {
+            ArgumentNullException.ThrowIfNull(image);
+
+            int size = image.Width * image.Height;
+
+            // transform input to float array
+            var src = image.Bytes.Select(x => (float)x).ToArray();
+
+            // create temporary arrays, used as buffers for convolution
+            var tmp = new float[size];
+            var dst = new float[size];
+
+            // convolve horizontally and vertically
+            HorizontalConvolution(src, tmp, image.Width, image.Height);
+            VerticalConvolution(tmp, dst, image.Width, image.Height);
+
+            for (int i = 0; i < size; i++)
+            {
+                var val = dst[i];
+                if (val < 0f)
+                    val = 0f;
+                if (val > 255f)
+                    val = 255f;
+                image.Bytes[i] = (byte)MathF.Round(val);
+            }
+        }
+
+        /// <summary>
         /// Generates a 1D Gaussian kernel of size (2*radius + 1).
         /// radius = (int)Math.Ceiling(3 * sigma) by default.
         /// </summary>
@@ -54,42 +85,6 @@
             }
 
             return kernel;
-        }
-
-        /// <summary>
-        /// Applies a Gaussian filter to a 1D byte array, returning a new 1D byte array.
-        /// </summary>
-        /// <param name="input">Input byte array (grayscale image).</param>
-        /// <param name="width">Width of the image.</param>
-        /// <param name="height">Height of the image.</param>
-        public static byte[] Apply(byte[] input, int width, int height)
-        {
-            int size = width * height;
-
-            // transform input to float array
-            var src = input.Select(x => (float)x).ToArray();
-
-            // create temporary arrays, used as buffers for convolution
-            var tmp = new float[size];
-            var dst = new float[size];
-
-            // convolve horizontally and vertically
-            HorizontalConvolution(src, tmp, width, height);
-            VerticalConvolution(tmp, dst, width, height);
-
-            // transform float array back to byte array, clipping values to [0, 255]
-            byte[] output = new byte[size];
-            for (int i = 0; i < size; i++)
-            {
-                var val = dst[i];
-                if (val < 0f)
-                    val = 0f;
-                if (val > 255f)
-                    val = 255f;
-                output[i] = (byte)MathF.Round(val);
-            }
-
-            return output;
         }
 
         /// <summary>

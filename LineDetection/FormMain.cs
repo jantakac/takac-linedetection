@@ -4,6 +4,7 @@ using System.Data;
 using System.Diagnostics;
 using MathNet.Numerics.LinearAlgebra;
 using LineDetection.GraphicalObjects;
+using System.IO;
 
 namespace LineDetection
 {
@@ -13,12 +14,14 @@ namespace LineDetection
 
         private int imageWidth;
         private int imageHeight;
+        private int resizeWidth;
+        private int resizeHeight;
         private double sigma;
         private int step;
         private int[]? curvePoints;
 
-        private GrayscaleByteImage? baseImage;
-        private GrayscaleByteImage? processedImage;
+        private YUVImage? baseImage;
+        private YUVImage? processedImage;
         private CoordTransformations? coordTransformations;
         private BezierCurve? bezierCurve;
 
@@ -46,13 +49,13 @@ namespace LineDetection
                 using Bitmap bitmap = baseImage.ToBitmap();
                 g.DrawImage(bitmap, new Point(0, 0));
 
-                if (checkBoxHistogram.Checked)
-                {
-                    using Bitmap? histogramBitpam = DrawHistogram(baseImage);
+                //if (checkBoxHistogram.Checked)
+                //{
+                //    using Bitmap? histogramBitpam = DrawHistogram(baseImage);
 
-                    if (histogramBitpam != null)
-                        g.DrawImage(histogramBitpam, new Point(0, imageHeight));
-                }
+                //    if (histogramBitpam != null)
+                //        g.DrawImage(histogramBitpam, new Point(0, imageHeight));
+                //}
             }
 
             if (processedImage != null)
@@ -60,79 +63,79 @@ namespace LineDetection
                 using Bitmap bitmap = processedImage.ToBitmap();
                 using Graphics gb = Graphics.FromImage(bitmap);
 
-                if (curvePoints != null)
-                {
-                    for (int i = 0; i < curvePoints.Length; i += 2)
-                    {
-                        Rectangle r = new(new Point(curvePoints[i] - 2, curvePoints[i + 1] - 2), new Size(4, 4));
-                        gb.FillRectangle(Brushes.Yellow, r);
-                    }
-                }
+                //if (curvePoints != null)
+                //{
+                //    for (int i = 0; i < curvePoints.Length; i += 2)
+                //    {
+                //        Rectangle r = new(new Point(curvePoints[i] - 2, curvePoints[i + 1] - 2), new Size(4, 4));
+                //        gb.FillRectangle(Brushes.Yellow, r);
+                //    }
+                //}
 
-                // draw fitted bezier curve
-                bezierCurve?.Draw(gb);
+                //// draw fitted bezier curve
+                //bezierCurve?.Draw(gb);
 
                 g.DrawImage(bitmap, new Point(imageWidth + 50, 0));
 
-                if (checkBoxHistogram.Checked)
-                {
-                    using Bitmap? histogramBitpam = DrawHistogram(processedImage);
+                //if (checkBoxHistogram.Checked)
+                //{
+                //    using Bitmap? histogramBitpam = DrawHistogram(processedImage);
 
-                    if (histogramBitpam != null)
-                        g.DrawImage(histogramBitpam, new Point(imageWidth + 50, imageHeight));
-                }
+                //    if (histogramBitpam != null)
+                //        g.DrawImage(histogramBitpam, new Point(imageWidth + 50, imageHeight));
+                //}
             }
         }
 
         /// <summary>
         /// DrawHistogram
         /// </summary>
-        private static Bitmap? DrawHistogram(GrayscaleByteImage parImage)
-        {
-            if (parImage == null)
-                return null;
+        //private static Bitmap? DrawHistogram(GrayscaleByteImage parImage)
+        //{
+        //    if (parImage == null)
+        //        return null;
 
-            Bitmap bitmap = new(512, 320);
+        //    Bitmap bitmap = new(512, 320);
 
-            parImage.UpdateHistogramData();
+        //    parImage.UpdateHistogramData();
 
-            // histogram processedImage
-            for (int x = 0; x < parImage.NormalisedHistogram.Length; x++)
-            {
-                int ymax = (int)Math.Round(parImage.NormalisedHistogram[x] * 300.0);
+        //    // histogram processedImage
+        //    for (int x = 0; x < parImage.NormalisedHistogram.Length; x++)
+        //    {
+        //        int ymax = (int)Math.Round(parImage.NormalisedHistogram[x] * 300.0);
 
-                for (int y = 0; y < ymax; y++)
-                {
-                    bitmap.SetPixel(2 * x, y + 14, Color.Green);
-                    bitmap.SetPixel(2 * x + 1, y + 14, Color.Green);
-                }
-            }
+        //        for (int y = 0; y < ymax; y++)
+        //        {
+        //            bitmap.SetPixel(2 * x, y + 14, Color.Green);
+        //            bitmap.SetPixel(2 * x + 1, y + 14, Color.Green);
+        //        }
+        //    }
 
-            // cumulative histogram
-            for (int x = 0; x < parImage.CumulativeNormalisedHistogram.Length; x++)
-            {
-                int y = (int)Math.Round(parImage.CumulativeNormalisedHistogram[x] * 300.0);
+        //    // cumulative histogram
+        //    for (int x = 0; x < parImage.CumulativeNormalisedHistogram.Length; x++)
+        //    {
+        //        int y = (int)Math.Round(parImage.CumulativeNormalisedHistogram[x] * 300.0);
 
-                bitmap.SetPixel(2 * x, y + 14, Color.Red);
-                bitmap.SetPixel(2 * x + 1, y + 14, Color.Red);
-            }
+        //        bitmap.SetPixel(2 * x, y + 14, Color.Red);
+        //        bitmap.SetPixel(2 * x + 1, y + 14, Color.Red);
+        //    }
 
-            bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+        //    bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
 
-            using Graphics gb = Graphics.FromImage(bitmap);
-            gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 15), new Point(bitmap.Width, bitmap.Height - 15));
-            gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 16), new Point(bitmap.Width, bitmap.Height - 16));
+        //    using Graphics gb = Graphics.FromImage(bitmap);
+        //    gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 15), new Point(bitmap.Width, bitmap.Height - 15));
+        //    gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 16), new Point(bitmap.Width, bitmap.Height - 16));
 
-            using Font f = new("Arial Narrow", 8);
+        //    using Font f = new("Arial Narrow", 8);
 
-            for (int x = 0; x < bitmap.Width; x += 20)
-            {
-                gb.DrawLine(Pens.Gray, new Point(x, bitmap.Height - 14), new Point(x, bitmap.Height - 6));
-                gb.DrawString((x / 2).ToString(), f, Brushes.Gray, new PointF(x, bitmap.Height - 14));
-            }
+        //    for (int x = 0; x < bitmap.Width; x += 20)
+        //    {
+        //        gb.DrawLine(Pens.Gray, new Point(x, bitmap.Height - 14), new Point(x, bitmap.Height - 6));
+        //        gb.DrawString((x / 2).ToString(), f, Brushes.Gray, new PointF(x, bitmap.Height - 14));
+        //    }
 
-            return bitmap;
-        }
+        //    return bitmap;
+        //}
 
 
         /// <summary>
@@ -179,20 +182,44 @@ namespace LineDetection
             bezierCurve = null;
 
             Stopwatch stopwatch = new();
+            TimeSpan elapsedTime;
 
-            coordTransformations = new((int)numericUpDownWidth.Value, 0, 0, (int)numericUpDownHeight.Value,
-                                       -500.0f, 0.0f, 500.0f, 1000.0f);
+            coordTransformations = new((int)numericUpDownWidth.Value, 0, 0, (int)numericUpDownHeight.Value, -500.0f, 0.0f, 500.0f, 1000.0f);
+
+            imageWidth = (int)numericUpDownWidth.Value;
+            imageHeight = (int)numericUpDownHeight.Value;
+
+            resizeWidth = (int)numericUpDownResizeWidth.Value;
+            resizeHeight = (int)numericUpDownResizeHeight.Value;
 
             string? selectedString = comboBox1.SelectedValue as string;
 
             if (string.IsNullOrEmpty(selectedString))
                 return;
 
-            byte[] imageBytes;
+            int bytesToRead = imageWidth * imageHeight;
+            byte[] imageBytes = new byte[bytesToRead];
 
             try
             {
-                imageBytes = File.ReadAllBytes(selectedString);
+                stopwatch.Restart();
+
+                // Read specific bytes
+                using FileStream fs = new(selectedString, FileMode.Open, FileAccess.Read);
+
+                // Set the position to the desired offset
+                fs.Seek(0, SeekOrigin.Begin);
+
+                // Read the desired number of bytes
+                int bytesRead = fs.Read(imageBytes, 0, bytesToRead);
+
+                // If fewer bytes are read, adjust the buffer size
+                if (bytesRead < bytesToRead)
+                    Array.Resize(ref imageBytes, bytesRead);
+
+                stopwatch.Stop();
+                elapsedTime = stopwatch.Elapsed;
+                textBoxMessages.AppendText($">>> Image load - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
             }
             catch (Exception e)
             {
@@ -200,59 +227,59 @@ namespace LineDetection
                 return;
             }
 
-            imageWidth = (int)numericUpDownWidth.Value;
-            imageHeight = (int)numericUpDownHeight.Value;
-
             if (!double.TryParse(textBoxSigma.Text, out sigma))
                 sigma = 1.5;
 
-            step = (int)numericUpDownStep.Value;
+            // step = (int)numericUpDownStep.Value;
 
-            baseImage = new GrayscaleByteImage(imageWidth, imageHeight);
+            baseImage = new YUVImage(imageBytes, imageWidth, imageHeight);
 
-            for (int y = 0; y < imageHeight; y++)
+            if (checkBoxResizeImage.Checked)
             {
-                for (int x = 0; x < imageWidth; x++)
-                {
-                    baseImage.Data[x, y] = imageBytes[x + imageWidth * y];
-                }
+                stopwatch.Restart();
+                processedImage = baseImage.ResizeGrayscaleImageBilinear(resizeWidth, resizeHeight);
+                stopwatch.Stop();
+                elapsedTime = stopwatch.Elapsed;
+                textBoxMessages.AppendText($">>> Image resize - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
+            }
+            else
+            {
+                stopwatch.Restart();
+                processedImage = (YUVImage)baseImage.Clone();
+                stopwatch.Stop();
+                elapsedTime = stopwatch.Elapsed;
+                textBoxMessages.AppendText($">>> Image clone - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
             }
 
             if (checkBoxGaussianBlur.Checked)
             {
-                GaussianBlur.Sigma = sigma;
-
-                stopwatch.Start();
-
-                processedImage = new GrayscaleByteImage(GaussianBlur.ApplyFilter(baseImage.Data, baseImage.Width, baseImage.Height), baseImage.Width, baseImage.Height);
-
+                stopwatch.Restart();
+                GaussianFilter.Sigma = sigma;
+                GaussianFilter.Apply(processedImage);
                 stopwatch.Stop();
-                TimeSpan elapsedTime = stopwatch.Elapsed;
-
+                elapsedTime = stopwatch.Elapsed;
                 textBoxMessages.AppendText($">>> Gaussian Blur Grayscale - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
             }
 
             if (checkBoxOtsuTreshold.Checked)
             {
-                stopwatch.Start();
-
-                processedImage = OtsuTresholding.Process(processedImage ?? baseImage);
-
+                stopwatch.Restart();
+                OtsuTreshold.Apply(processedImage);
                 stopwatch.Stop();
-                TimeSpan elapsedTime = stopwatch.Elapsed;
+                elapsedTime = stopwatch.Elapsed;
 
                 textBoxMessages.AppendText($">>> Histogram + Otsu treshold - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
             }
 
             if (checkBoxSobelEdge.Checked)
             {
-                stopwatch.Start();
+                //stopwatch.Start();
 
-                curvePoints = SobelEdgeDetection.Process(processedImage ?? baseImage, step);
+                //curvePoints = SobelEdgeDetection.Process(processedImage ?? baseImage, step);
 
-                stopwatch.Stop();
-                TimeSpan elapsedTime = stopwatch.Elapsed;
-                textBoxMessages.AppendText($">>> Sobel edge detector - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
+                //stopwatch.Stop();
+                //TimeSpan elapsedTime = stopwatch.Elapsed;
+                //textBoxMessages.AppendText($">>> Sobel edge detector - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
             }
 
             if (checkBoxFitBezier.Checked && curvePoints != null && curvePoints.Length > 3)
@@ -284,7 +311,7 @@ namespace LineDetection
             doubleBufferedPanelDrawing.Invalidate();
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }
@@ -334,6 +361,11 @@ namespace LineDetection
             ReloadAndDisplay();
         }
 
+        private void checkBoxResizeImage_CheckedChanged(object sender, EventArgs e)
+        {
+            ReloadAndDisplay();
+        }
+
         private void DoubleBufferedPanelDrawing_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -343,13 +375,13 @@ namespace LineDetection
                 using Bitmap bitmap = baseImage.ToBitmap();
                 g.DrawImage(bitmap, new Point(0, 0));
 
-                if (checkBoxHistogram.Checked)
-                {
-                    using Bitmap? histogramBitpam = DrawHistogram(baseImage);
+                //if (checkBoxHistogram.Checked)
+                //{
+                //    using Bitmap? histogramBitpam = DrawHistogram(baseImage);
 
-                    if (histogramBitpam != null)
-                        g.DrawImage(histogramBitpam, new Point(0, imageHeight));
-                }
+                //    if (histogramBitpam != null)
+                //        g.DrawImage(histogramBitpam, new Point(0, imageHeight));
+                //}
             }
 
             if (processedImage != null)
@@ -371,13 +403,13 @@ namespace LineDetection
 
                 g.DrawImage(bitmap, new Point(imageWidth + 50, 0));
 
-                if (checkBoxHistogram.Checked)
-                {
-                    using Bitmap? histogramBitpam = DrawHistogram(processedImage);
+                //if (checkBoxHistogram.Checked)
+                //{
+                //    using Bitmap? histogramBitpam = DrawHistogram(processedImage);
 
-                    if (histogramBitpam != null)
-                        g.DrawImage(histogramBitpam, new Point(imageWidth + 50, imageHeight));
-                }
+                //    if (histogramBitpam != null)
+                //        g.DrawImage(histogramBitpam, new Point(imageWidth + 50, imageHeight));
+                //}
             }
         }
     }

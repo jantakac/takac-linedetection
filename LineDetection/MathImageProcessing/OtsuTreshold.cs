@@ -8,12 +8,14 @@
         /// <summary>
         /// Applies Otsu threshold to a 1D byte array, returning a new 1D byte array with values 0 or 255.
         /// </summary>
-        public static void Apply(YUVImage input)
+        public static void Apply(YUVImage? image)
         {
-            var threshold = GetOtsuThreshold(input);
+            ArgumentNullException.ThrowIfNull(image);
 
-            for (int i = 0; i < input.Bytes.Length; i++)
-                input.Bytes[i] = input.Bytes[i] < threshold ? (byte)0 : (byte)255;
+            var threshold = GetOtsuThreshold(image);
+
+            for (int i = 0; i < image.Bytes.Length; i++)
+                image.Bytes[i] = image.Bytes[i] < threshold ? (byte)0 : (byte)255;
         }
 
         /// <summary>
@@ -23,8 +25,6 @@
         /// <returns></returns>
         private static byte GetOtsuThreshold(YUVImage input)
         {
-            ArgumentNullException.ThrowIfNull(input);
-
             var bgWeight = 0f;
             var bgIntensity = 0f;
             var maxVariance = -1f;

@@ -32,6 +32,7 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             panelLeft = new Panel();
+            checkBoxResizeImage = new CheckBox();
             textBoxSigma = new TextBox();
             buttonRefresh = new Button();
             label5 = new Label();
@@ -49,9 +50,13 @@
             label1 = new Label();
             comboBox1 = new ComboBox();
             panelDrawing = new Panel();
+            doubleBufferedPanelDrawing = new Tools.DoubleBufferedPanel();
             panelBottomText = new Panel();
             textBoxMessages = new TextBox();
-            doubleBufferedPanelDrawing = new Tools.DoubleBufferedPanel();
+            numericUpDownResizeWidth = new NumericUpDown();
+            numericUpDownResizeHeight = new NumericUpDown();
+            label6 = new Label();
+            label7 = new Label();
             menuStrip1.SuspendLayout();
             panelLeft.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownWidth).BeginInit();
@@ -59,6 +64,8 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDownStep).BeginInit();
             panelDrawing.SuspendLayout();
             panelBottomText.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownResizeWidth).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownResizeHeight).BeginInit();
             SuspendLayout();
             // 
             // menuStrip1
@@ -80,13 +87,18 @@
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(93, 22);
+            exitToolStripMenuItem.Size = new Size(92, 22);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
             // 
             // panelLeft
             // 
             panelLeft.BorderStyle = BorderStyle.FixedSingle;
+            panelLeft.Controls.Add(numericUpDownResizeWidth);
+            panelLeft.Controls.Add(numericUpDownResizeHeight);
+            panelLeft.Controls.Add(label6);
+            panelLeft.Controls.Add(label7);
+            panelLeft.Controls.Add(checkBoxResizeImage);
             panelLeft.Controls.Add(textBoxSigma);
             panelLeft.Controls.Add(buttonRefresh);
             panelLeft.Controls.Add(label5);
@@ -109,9 +121,20 @@
             panelLeft.Size = new Size(275, 960);
             panelLeft.TabIndex = 1;
             // 
+            // checkBoxResizeImage
+            // 
+            checkBoxResizeImage.AutoSize = true;
+            checkBoxResizeImage.Location = new Point(5, 201);
+            checkBoxResizeImage.Name = "checkBoxResizeImage";
+            checkBoxResizeImage.Size = new Size(94, 19);
+            checkBoxResizeImage.TabIndex = 13;
+            checkBoxResizeImage.Text = "Resize image";
+            checkBoxResizeImage.UseVisualStyleBackColor = true;
+            checkBoxResizeImage.CheckedChanged += checkBoxResizeImage_CheckedChanged;
+            // 
             // textBoxSigma
             // 
-            textBoxSigma.Location = new Point(186, 141);
+            textBoxSigma.Location = new Point(186, 228);
             textBoxSigma.Name = "textBoxSigma";
             textBoxSigma.Size = new Size(82, 23);
             textBoxSigma.TabIndex = 12;
@@ -120,7 +143,7 @@
             // 
             // buttonRefresh
             // 
-            buttonRefresh.Location = new Point(3, 314);
+            buttonRefresh.Location = new Point(3, 401);
             buttonRefresh.Name = "buttonRefresh";
             buttonRefresh.Size = new Size(75, 23);
             buttonRefresh.TabIndex = 11;
@@ -131,7 +154,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(5, 114);
+            label5.Location = new Point(5, 172);
             label5.Name = "label5";
             label5.Size = new Size(126, 15);
             label5.TabIndex = 10;
@@ -140,7 +163,7 @@
             // checkBoxSobelEdge
             // 
             checkBoxSobelEdge.AutoSize = true;
-            checkBoxSobelEdge.Location = new Point(5, 212);
+            checkBoxSobelEdge.Location = new Point(5, 299);
             checkBoxSobelEdge.Name = "checkBoxSobelEdge";
             checkBoxSobelEdge.Size = new Size(118, 19);
             checkBoxSobelEdge.TabIndex = 9;
@@ -151,7 +174,7 @@
             // checkBoxFitBezier
             // 
             checkBoxFitBezier.AutoSize = true;
-            checkBoxFitBezier.Location = new Point(5, 246);
+            checkBoxFitBezier.Location = new Point(5, 333);
             checkBoxFitBezier.Name = "checkBoxFitBezier";
             checkBoxFitBezier.Size = new Size(137, 19);
             checkBoxFitBezier.TabIndex = 8;
@@ -162,7 +185,7 @@
             // checkBoxHistogram
             // 
             checkBoxHistogram.AutoSize = true;
-            checkBoxHistogram.Location = new Point(5, 280);
+            checkBoxHistogram.Location = new Point(5, 367);
             checkBoxHistogram.Name = "checkBoxHistogram";
             checkBoxHistogram.Size = new Size(117, 19);
             checkBoxHistogram.TabIndex = 8;
@@ -194,7 +217,7 @@
             // 
             // numericUpDownStep
             // 
-            numericUpDownStep.Location = new Point(188, 112);
+            numericUpDownStep.Location = new Point(188, 170);
             numericUpDownStep.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numericUpDownStep.Name = "numericUpDownStep";
             numericUpDownStep.Size = new Size(80, 23);
@@ -205,7 +228,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(140, 144);
+            label4.Location = new Point(140, 231);
             label4.Name = "label4";
             label4.Size = new Size(40, 15);
             label4.TabIndex = 6;
@@ -214,7 +237,7 @@
             // checkBoxOtsuTreshold
             // 
             checkBoxOtsuTreshold.AutoSize = true;
-            checkBoxOtsuTreshold.Location = new Point(5, 176);
+            checkBoxOtsuTreshold.Location = new Point(5, 266);
             checkBoxOtsuTreshold.Name = "checkBoxOtsuTreshold";
             checkBoxOtsuTreshold.Size = new Size(131, 19);
             checkBoxOtsuTreshold.TabIndex = 5;
@@ -225,7 +248,7 @@
             // checkBoxGaussianBlur
             // 
             checkBoxGaussianBlur.AutoSize = true;
-            checkBoxGaussianBlur.Location = new Point(5, 143);
+            checkBoxGaussianBlur.Location = new Point(5, 233);
             checkBoxGaussianBlur.Name = "checkBoxGaussianBlur";
             checkBoxGaussianBlur.Size = new Size(131, 19);
             checkBoxGaussianBlur.TabIndex = 5;
@@ -238,7 +261,7 @@
             label3.AutoSize = true;
             label3.Location = new Point(5, 84);
             label3.Name = "label3";
-            label3.Size = new Size(67, 15);
+            label3.Size = new Size(66, 15);
             label3.TabIndex = 3;
             label3.Text = "Height (px)";
             // 
@@ -247,7 +270,7 @@
             label2.AutoSize = true;
             label2.Location = new Point(5, 55);
             label2.Name = "label2";
-            label2.Size = new Size(63, 15);
+            label2.Size = new Size(62, 15);
             label2.TabIndex = 2;
             label2.Text = "Width (px)";
             // 
@@ -267,7 +290,7 @@
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(265, 23);
             comboBox1.TabIndex = 0;
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            comboBox1.SelectedIndexChanged += ComboBox1_SelectedIndexChanged;
             // 
             // panelDrawing
             // 
@@ -277,6 +300,15 @@
             panelDrawing.Name = "panelDrawing";
             panelDrawing.Size = new Size(1169, 835);
             panelDrawing.TabIndex = 0;
+            // 
+            // doubleBufferedPanelDrawing
+            // 
+            doubleBufferedPanelDrawing.Dock = DockStyle.Fill;
+            doubleBufferedPanelDrawing.Location = new Point(0, 0);
+            doubleBufferedPanelDrawing.Name = "doubleBufferedPanelDrawing";
+            doubleBufferedPanelDrawing.Size = new Size(1169, 835);
+            doubleBufferedPanelDrawing.TabIndex = 0;
+            doubleBufferedPanelDrawing.Paint += DoubleBufferedPanelDrawing_Paint;
             // 
             // panelBottomText
             // 
@@ -298,14 +330,43 @@
             textBoxMessages.Size = new Size(1169, 125);
             textBoxMessages.TabIndex = 0;
             // 
-            // doubleBufferedPanelDrawing
+            // numericUpDownResizeWidth
             // 
-            doubleBufferedPanelDrawing.Dock = DockStyle.Fill;
-            doubleBufferedPanelDrawing.Location = new Point(0, 0);
-            doubleBufferedPanelDrawing.Name = "doubleBufferedPanelDrawing";
-            doubleBufferedPanelDrawing.Size = new Size(1169, 835);
-            doubleBufferedPanelDrawing.TabIndex = 0;
-            doubleBufferedPanelDrawing.Paint += DoubleBufferedPanelDrawing_Paint;
+            numericUpDownResizeWidth.Location = new Point(188, 111);
+            numericUpDownResizeWidth.Maximum = new decimal(new int[] { 256, 0, 0, 0 });
+            numericUpDownResizeWidth.Minimum = new decimal(new int[] { 8, 0, 0, 0 });
+            numericUpDownResizeWidth.Name = "numericUpDownResizeWidth";
+            numericUpDownResizeWidth.Size = new Size(80, 23);
+            numericUpDownResizeWidth.TabIndex = 16;
+            numericUpDownResizeWidth.Value = new decimal(new int[] { 128, 0, 0, 0 });
+            // 
+            // numericUpDownResizeHeight
+            // 
+            numericUpDownResizeHeight.Location = new Point(188, 140);
+            numericUpDownResizeHeight.Maximum = new decimal(new int[] { 256, 0, 0, 0 });
+            numericUpDownResizeHeight.Minimum = new decimal(new int[] { 8, 0, 0, 0 });
+            numericUpDownResizeHeight.Name = "numericUpDownResizeHeight";
+            numericUpDownResizeHeight.Size = new Size(80, 23);
+            numericUpDownResizeHeight.TabIndex = 17;
+            numericUpDownResizeHeight.Value = new decimal(new int[] { 128, 0, 0, 0 });
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(5, 142);
+            label6.Name = "label6";
+            label6.Size = new Size(99, 15);
+            label6.TabIndex = 15;
+            label6.Text = "Resize height (px)";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(5, 113);
+            label7.Name = "label7";
+            label7.Size = new Size(95, 15);
+            label7.TabIndex = 14;
+            label7.Text = "Resize width (px)";
             // 
             // FormMain
             // 
@@ -331,6 +392,8 @@
             panelDrawing.ResumeLayout(false);
             panelBottomText.ResumeLayout(false);
             panelBottomText.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownResizeWidth).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownResizeHeight).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -361,5 +424,10 @@
         private CheckBox checkBoxFitBezier;
         private TextBox textBoxSigma;
         private Tools.DoubleBufferedPanel doubleBufferedPanelDrawing;
+        private CheckBox checkBoxResizeImage;
+        private NumericUpDown numericUpDownResizeWidth;
+        private NumericUpDown numericUpDownResizeHeight;
+        private Label label6;
+        private Label label7;
     }
 }
