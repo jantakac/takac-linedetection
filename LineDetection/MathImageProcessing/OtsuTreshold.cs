@@ -14,8 +14,20 @@
 
             var threshold = GetOtsuThreshold(image);
 
-            for (int i = 0; i < image.Bytes.Length; i++)
-                image.Bytes[i] = image.Bytes[i] < threshold ? (byte)0 : (byte)255;
+            int width = image.Width;
+            int height = image.Height;
+
+            for (int y = 0; y < width; y++)
+            {
+                for (int x = 0; x < height; x++)
+                {
+                    // safe margin at the border of the image
+                    if (x < 3 || x > width - 1 - 3)
+                        image.Bytes[x + y * height] = 255;
+                    else
+                        image.Bytes[x + y * height] = image.Bytes[x + y * height] < threshold ? (byte)0 : (byte)255;
+                }
+            }
         }
 
         /// <summary>

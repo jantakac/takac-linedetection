@@ -32,6 +32,10 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             panelLeft = new Panel();
+            numericUpDownResizeWidth = new NumericUpDown();
+            numericUpDownResizeHeight = new NumericUpDown();
+            label6 = new Label();
+            label7 = new Label();
             checkBoxResizeImage = new CheckBox();
             textBoxSigma = new TextBox();
             buttonRefresh = new Button();
@@ -53,19 +57,15 @@
             doubleBufferedPanelDrawing = new Tools.DoubleBufferedPanel();
             panelBottomText = new Panel();
             textBoxMessages = new TextBox();
-            numericUpDownResizeWidth = new NumericUpDown();
-            numericUpDownResizeHeight = new NumericUpDown();
-            label6 = new Label();
-            label7 = new Label();
             menuStrip1.SuspendLayout();
             panelLeft.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownResizeWidth).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownResizeHeight).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownWidth).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHeight).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownStep).BeginInit();
             panelDrawing.SuspendLayout();
             panelBottomText.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownResizeWidth).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownResizeHeight).BeginInit();
             SuspendLayout();
             // 
             // menuStrip1
@@ -120,6 +120,44 @@
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(275, 960);
             panelLeft.TabIndex = 1;
+            // 
+            // numericUpDownResizeWidth
+            // 
+            numericUpDownResizeWidth.Location = new Point(188, 111);
+            numericUpDownResizeWidth.Maximum = new decimal(new int[] { 256, 0, 0, 0 });
+            numericUpDownResizeWidth.Minimum = new decimal(new int[] { 8, 0, 0, 0 });
+            numericUpDownResizeWidth.Name = "numericUpDownResizeWidth";
+            numericUpDownResizeWidth.Size = new Size(80, 23);
+            numericUpDownResizeWidth.TabIndex = 16;
+            numericUpDownResizeWidth.Value = new decimal(new int[] { 128, 0, 0, 0 });
+            // 
+            // numericUpDownResizeHeight
+            // 
+            numericUpDownResizeHeight.Location = new Point(188, 140);
+            numericUpDownResizeHeight.Maximum = new decimal(new int[] { 256, 0, 0, 0 });
+            numericUpDownResizeHeight.Minimum = new decimal(new int[] { 8, 0, 0, 0 });
+            numericUpDownResizeHeight.Name = "numericUpDownResizeHeight";
+            numericUpDownResizeHeight.Size = new Size(80, 23);
+            numericUpDownResizeHeight.TabIndex = 17;
+            numericUpDownResizeHeight.Value = new decimal(new int[] { 128, 0, 0, 0 });
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(5, 142);
+            label6.Name = "label6";
+            label6.Size = new Size(99, 15);
+            label6.TabIndex = 15;
+            label6.Text = "Resize height (px)";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(5, 113);
+            label7.Name = "label7";
+            label7.Size = new Size(95, 15);
+            label7.TabIndex = 14;
+            label7.Text = "Resize width (px)";
             // 
             // checkBoxResizeImage
             // 
@@ -222,7 +260,7 @@
             numericUpDownStep.Name = "numericUpDownStep";
             numericUpDownStep.Size = new Size(80, 23);
             numericUpDownStep.TabIndex = 7;
-            numericUpDownStep.Value = new decimal(new int[] { 85, 0, 0, 0 });
+            numericUpDownStep.Value = new decimal(new int[] { 10, 0, 0, 0 });
             numericUpDownStep.ValueChanged += NumericUpDownRadius_ValueChanged;
             // 
             // label4
@@ -330,44 +368,6 @@
             textBoxMessages.Size = new Size(1169, 125);
             textBoxMessages.TabIndex = 0;
             // 
-            // numericUpDownResizeWidth
-            // 
-            numericUpDownResizeWidth.Location = new Point(188, 111);
-            numericUpDownResizeWidth.Maximum = new decimal(new int[] { 256, 0, 0, 0 });
-            numericUpDownResizeWidth.Minimum = new decimal(new int[] { 8, 0, 0, 0 });
-            numericUpDownResizeWidth.Name = "numericUpDownResizeWidth";
-            numericUpDownResizeWidth.Size = new Size(80, 23);
-            numericUpDownResizeWidth.TabIndex = 16;
-            numericUpDownResizeWidth.Value = new decimal(new int[] { 128, 0, 0, 0 });
-            // 
-            // numericUpDownResizeHeight
-            // 
-            numericUpDownResizeHeight.Location = new Point(188, 140);
-            numericUpDownResizeHeight.Maximum = new decimal(new int[] { 256, 0, 0, 0 });
-            numericUpDownResizeHeight.Minimum = new decimal(new int[] { 8, 0, 0, 0 });
-            numericUpDownResizeHeight.Name = "numericUpDownResizeHeight";
-            numericUpDownResizeHeight.Size = new Size(80, 23);
-            numericUpDownResizeHeight.TabIndex = 17;
-            numericUpDownResizeHeight.Value = new decimal(new int[] { 128, 0, 0, 0 });
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new Point(5, 142);
-            label6.Name = "label6";
-            label6.Size = new Size(99, 15);
-            label6.TabIndex = 15;
-            label6.Text = "Resize height (px)";
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(5, 113);
-            label7.Name = "label7";
-            label7.Size = new Size(95, 15);
-            label7.TabIndex = 14;
-            label7.Text = "Resize width (px)";
-            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -386,14 +386,14 @@
             menuStrip1.PerformLayout();
             panelLeft.ResumeLayout(false);
             panelLeft.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownResizeWidth).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownResizeHeight).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownWidth).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHeight).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownStep).EndInit();
             panelDrawing.ResumeLayout(false);
             panelBottomText.ResumeLayout(false);
             panelBottomText.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownResizeWidth).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownResizeHeight).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }

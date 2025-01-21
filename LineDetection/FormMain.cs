@@ -230,7 +230,7 @@ namespace LineDetection
             if (!double.TryParse(textBoxSigma.Text, out sigma))
                 sigma = 1.5;
 
-            // step = (int)numericUpDownStep.Value;
+            step = (int)numericUpDownStep.Value;
 
             baseImage = new YUVImage(imageBytes, imageWidth, imageHeight);
 
@@ -273,13 +273,11 @@ namespace LineDetection
 
             if (checkBoxSobelEdge.Checked)
             {
-                //stopwatch.Start();
-
-                //curvePoints = SobelEdgeDetection.Process(processedImage ?? baseImage, step);
-
-                //stopwatch.Stop();
-                //TimeSpan elapsedTime = stopwatch.Elapsed;
-                //textBoxMessages.AppendText($">>> Sobel edge detector - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
+                stopwatch.Restart();
+                curvePoints = SobelEdgeDetection.Process(processedImage, step);
+                stopwatch.Stop();
+                elapsedTime = stopwatch.Elapsed;
+                textBoxMessages.AppendText($">>> Sobel edge detector - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
             }
 
             if (checkBoxFitBezier.Checked && curvePoints != null && curvePoints.Length > 3)
