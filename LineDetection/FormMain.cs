@@ -142,8 +142,8 @@ namespace LineDetection
         {
             stopwatch.Start();
 
-            string path = @"C:\\Users\\micha\\Desktop\\GrayscaleImages";
-            //string path = @"C:\\Users\\Michal Lekýr\\Desktop\\GrayscaleImages";
+            //string path = @"C:\\Users\\micha\\Desktop\\GrayscaleImages";
+            string path = @"C:\\Users\\Michal Lekýr\\Desktop\\GrayscaleImages";
             DataTable table = new();
             table.Columns.Add("File Name");
             table.Columns.Add("File Path");
