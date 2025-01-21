@@ -1,10 +1,9 @@
+using LineDetection.GraphicalObjects;
 using LineDetection.MathImageProcessing;
 using LineDetection.Tools;
+using MathNet.Numerics.LinearAlgebra;
 using System.Data;
 using System.Diagnostics;
-using MathNet.Numerics.LinearAlgebra;
-using LineDetection.GraphicalObjects;
-using System.IO;
 
 namespace LineDetection
 {
