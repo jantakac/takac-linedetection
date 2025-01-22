@@ -17,15 +17,15 @@
             int width = image.Width;
             int height = image.Height;
 
-            for (int y = 0; y < width; y++)
+            for (int y = 0; y < height; y++)
             {
-                for (int x = 0; x < height; x++)
+                for (int x = 0; x < width; x++)
                 {
                     // safe margin at the border of the image
                     if (x < 3 || x > width - 1 - 3)
-                        image.Bytes[x + y * height] = 255;
+                        image.Bytes[x + y * width] = 255;
                     else
-                        image.Bytes[x + y * height] = image.Bytes[x + y * height] < threshold ? (byte)0 : (byte)255;
+                        image.Bytes[x + y * width] = image.Bytes[x + y * width] < threshold ? (byte)0 : (byte)255;
                 }
             }
         }

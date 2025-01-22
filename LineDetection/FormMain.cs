@@ -15,7 +15,8 @@ namespace LineDetection
         private int imageHeight;
         private int resizeWidth;
         private int resizeHeight;
-        private double sigma;
+        private float sigma;
+        private int radius;
         private int step;
         private int[]? curvePoints;
 
@@ -39,7 +40,7 @@ namespace LineDetection
             Application.Exit();
         }
 
-        private void DoubleBufferedPanel_Paint(object sender, PaintEventArgs e)
+        private void DoubleBufferedPanelDrawing_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
 
@@ -62,19 +63,19 @@ namespace LineDetection
                 using Bitmap bitmap = processedImage.ToBitmap();
                 using Graphics gb = Graphics.FromImage(bitmap);
 
-                //if (curvePoints != null)
-                //{
-                //    for (int i = 0; i < curvePoints.Length; i += 2)
-                //    {
-                //        Rectangle r = new(new Point(curvePoints[i] - 2, curvePoints[i + 1] - 2), new Size(4, 4));
-                //        gb.FillRectangle(Brushes.Yellow, r);
-                //    }
-                //}
+                if (curvePoints != null)
+                {
+                    for (int i = 0; i < curvePoints.Length; i += 2)
+                    {
+                        Rectangle r = new(new Point(curvePoints[i] - 2, curvePoints[i + 1] - 2), new Size(4, 4));
+                        gb.FillRectangle(Brushes.Yellow, r);
+                    }
+                }
 
-                //// draw fitted bezier curve
-                //bezierCurve?.Draw(gb);
+                // draw fitted bezier curve
+                bezierCurve?.Draw(gb);
 
-                g.DrawImage(bitmap, new Point(imageWidth + 50, 0));
+                g.DrawImage(bitmap, new Point(imageWidth + 10, 0));
 
                 //if (checkBoxHistogram.Checked)
                 //{
@@ -85,6 +86,7 @@ namespace LineDetection
                 //}
             }
         }
+
 
         /// <summary>
         /// DrawHistogram
@@ -226,8 +228,11 @@ namespace LineDetection
                 return;
             }
 
-            if (!double.TryParse(textBoxSigma.Text, out sigma))
-                sigma = 1.5;
+            if (!double.TryParse(textBoxSigma.Text.Replace('.', ','), out double sigmaDouble))
+                throw new ArgumentOutOfRangeException(nameof(textBoxSigma));
+
+            sigma = (float)sigmaDouble;
+            radius = (int)numericUpDownRadius.Value;
 
             step = (int)numericUpDownStep.Value;
 
@@ -253,8 +258,9 @@ namespace LineDetection
             if (checkBoxGaussianBlur.Checked)
             {
                 stopwatch.Restart();
-                GaussianFilter.Sigma = sigma;
-                GaussianFilter.Apply(processedImage);
+                GaussianFilter2.Sigma = sigma;
+                GaussianFilter2.Radius = radius;
+                GaussianFilter2.Apply(ref processedImage);
                 stopwatch.Stop();
                 elapsedTime = stopwatch.Elapsed;
                 textBoxMessages.AppendText($">>> Gaussian Blur Grayscale - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
@@ -363,51 +369,14 @@ namespace LineDetection
             ReloadAndDisplay();
         }
 
-        private void DoubleBufferedPanelDrawing_Paint(object sender, PaintEventArgs e)
+        private void textBoxSigma_TextChanged(object sender, EventArgs e)
         {
-            Graphics g = e.Graphics;
+            ReloadAndDisplay();
+        }
 
-            if (baseImage != null)
-            {
-                using Bitmap bitmap = baseImage.ToBitmap();
-                g.DrawImage(bitmap, new Point(0, 0));
-
-                //if (checkBoxHistogram.Checked)
-                //{
-                //    using Bitmap? histogramBitpam = DrawHistogram(baseImage);
-
-                //    if (histogramBitpam != null)
-                //        g.DrawImage(histogramBitpam, new Point(0, imageHeight));
-                //}
-            }
-
-            if (processedImage != null)
-            {
-                using Bitmap bitmap = processedImage.ToBitmap();
-                using Graphics gb = Graphics.FromImage(bitmap);
-
-                if (curvePoints != null)
-                {
-                    for (int i = 0; i < curvePoints.Length; i += 2)
-                    {
-                        Rectangle r = new(new Point(curvePoints[i] - 2, curvePoints[i + 1] - 2), new Size(4, 4));
-                        gb.FillRectangle(Brushes.Yellow, r);
-                    }
-                }
-
-                // draw fitted bezier curve
-                bezierCurve?.Draw(gb);
-
-                g.DrawImage(bitmap, new Point(imageWidth + 50, 0));
-
-                //if (checkBoxHistogram.Checked)
-                //{
-                //    using Bitmap? histogramBitpam = DrawHistogram(processedImage);
-
-                //    if (histogramBitpam != null)
-                //        g.DrawImage(histogramBitpam, new Point(imageWidth + 50, imageHeight));
-                //}
-            }
+        private void numericUpDownRadius_ValueChanged_1(object sender, EventArgs e)
+        {
+            ReloadAndDisplay();
         }
     }
 }

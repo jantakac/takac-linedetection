@@ -5,7 +5,7 @@ namespace LineDetection.MathImageProcessing
     public sealed class YUVImage : ICloneable
     {
         public static readonly int MIN_SIZE = 16;
-        public static readonly int MAX_SIZE = 512;
+        public static readonly int MAX_SIZE = 640;
 
         private readonly int width;
         private readonly int height;
@@ -63,7 +63,7 @@ namespace LineDetection.MathImageProcessing
             if (parWidth < MIN_SIZE || parHeight < MIN_SIZE || parWidth > MAX_SIZE || parHeight > MAX_SIZE)
                 throw new ArgumentException("Invalid image size");
 
-            if (parImageBytes is null || parImageBytes.Length < 256 || parImageBytes.Length > 262144)
+            if (parImageBytes is null || parImageBytes.Length < 256 || parImageBytes.Length > 307200)
                 throw new ArgumentException("Invalid image buffer");
 
             width = parWidth;

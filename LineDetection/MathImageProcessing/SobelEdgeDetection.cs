@@ -21,7 +21,7 @@
             float precision = (float)image.Height / numberOfPoints;
 
             // apply tresholding
-            for (float yy = 0; yy <= image.Height; yy += precision)
+            for (float yy = 0; yy < image.Height; yy += precision)
             {
                 int y = (int)yy * image.Width;
 
