@@ -14,7 +14,7 @@
 
             var threshold = GetOtsuThreshold(image);
 
-            bool containsFG = ContainsForeground(image.Histogram, threshold, image.Width * image.Height);
+            int inflationPointCount = image.CountInflectionPoints();
 
             int width = image.Width;
             int height = image.Height;
@@ -68,28 +68,6 @@
             }
 
             return bestThreshold;
-        }
-
-        /// <summary>
-        /// nalyze the histogram to check for foreground objects
-        /// </summary>
-        public static bool ContainsForeground(int[] histogram, int otsuThreshold, int totalPixels)
-        {
-            // Count pixels below and above the threshold
-            int belowThreshold = histogram.Take(otsuThreshold).Sum();
-            int aboveThreshold = histogram.Skip(otsuThreshold).Sum();
-
-            // Calculate ratios
-            float belowRatio = (float)belowThreshold / totalPixels;
-            float aboveRatio = (float)aboveThreshold / totalPixels;
-
-            // Heuristic: If one side dominates heavily, it's likely just background
-            if (belowRatio > 0.95 || aboveRatio > 0.95)
-            {
-                return false; // Mostly background
-            }
-
-            return true; // Likely foreground objects exist
         }
     }
 }

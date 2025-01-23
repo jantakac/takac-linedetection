@@ -6,7 +6,7 @@
     public static class GaussianFilter3
     {
         private static float[] kernel = new float[1];
-        private static float sigma = 1.0f;
+        private static float sigma = 3.0f;
 
         public static float Sigma
         {

@@ -24,7 +24,7 @@ namespace LineDetection.MathImageProcessing
         private float intensitySum;
         private readonly float[] normalizedHistogram = new float[256];
         private readonly int[] cumulativeHistogram = new int[256];
-        private readonly float[] cumulativeNormalizedHistogram = new float[256];
+        private readonly float[] normalisedCDF = new float[256];
 
         // !!! - warning - before asking these two values, first histogram has to be updated by asking it's value
         public float[] IntensityPropabilities { get { return intensityPropabilities; } }
@@ -38,28 +38,9 @@ namespace LineDetection.MathImageProcessing
             }
         }
 
-        public int[] HistogramCDF
-        {
-            get
-            {
-                histogram = Histogram;
-                int[] brightnessCDF = new int[256];
-
-                for (int i = 0; i < 256; ++i)
-                {
-                    if (i == 0)
-                        brightnessCDF[i] = histogram[i];
-                    else
-                        brightnessCDF[i] = brightnessCDF[i - 1] + histogram[i];
-                }
-
-                return brightnessCDF;
-            }
-        }
-
         public float[] NormalisedHistogram { get { return normalizedHistogram; } }
         public int[] CumulativeHistogram { get { return cumulativeHistogram; } }
-        public float[] CumulativeNormalisedHistogram { get { return cumulativeNormalizedHistogram; } }
+        public float[] CumulativeNormalisedHistogram { get { return normalisedCDF; } }
 
         /// <summary>
         /// Constructor
@@ -102,6 +83,7 @@ namespace LineDetection.MathImageProcessing
             var src = histogram.Select(x => (float)x).ToArray();
             var dst = new float[src.Length];
 
+            // histogram Gaussian filtering
             GaussianFilter3.HorizontalConvolution(src, dst, 256, 1);
             histogram = dst.Select(x => (int)x).ToArray();
 
@@ -143,8 +125,31 @@ namespace LineDetection.MathImageProcessing
             // normalise cumulative histogram
             for (int i = 0; i < 256; i++)
             {
-                cumulativeNormalizedHistogram[i] = (float)cumulativeHistogram[i] / cumulativeHistogram[255];
+                normalisedCDF[i] = (float)cumulativeHistogram[i] / cumulativeHistogram[255];
             }
+        }
+
+        /// <summary>
+        /// Count inflection points in CDF
+        /// </summary>
+        public int CountInflectionPoints()
+        {
+            int inflectionCount = 0;
+            int n = normalisedCDF.Length;
+
+            for (int i = 1; i < n - 1; i++)
+            {
+                double prevSlope = normalisedCDF[i] - normalisedCDF[i - 1];
+                double nextSlope = normalisedCDF[i + 1] - normalisedCDF[i];
+
+                // Detect change in slope direction (sign change of second derivative)
+                if ((prevSlope > 0 && nextSlope < 0) || (prevSlope < 0 && nextSlope > 0))
+                {
+                    inflectionCount++;
+                }
+            }
+
+            return inflectionCount;
         }
 
         /// <summary>
