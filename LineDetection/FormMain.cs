@@ -40,6 +40,11 @@ namespace LineDetection
             Application.Exit();
         }
 
+        /// <summary>
+        /// DoubleBufferedPanelDrawing_Paint
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DoubleBufferedPanelDrawing_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -49,13 +54,13 @@ namespace LineDetection
                 using Bitmap bitmap = baseImage.ToBitmap();
                 g.DrawImage(bitmap, new Point(0, 0));
 
-                //if (checkBoxHistogram.Checked)
-                //{
-                //    using Bitmap? histogramBitpam = DrawHistogram(baseImage);
+                if (checkBoxHistogram.Checked)
+                {
+                    using Bitmap? histogramBitpam = DrawHistogram(baseImage);
 
-                //    if (histogramBitpam != null)
-                //        g.DrawImage(histogramBitpam, new Point(0, imageHeight));
-                //}
+                    if (histogramBitpam != null)
+                        g.DrawImage(histogramBitpam, new Point(0, imageHeight));
+                }
             }
 
             if (processedImage != null)
@@ -77,66 +82,64 @@ namespace LineDetection
 
                 g.DrawImage(bitmap, new Point(imageWidth + 10, 0));
 
-                //if (checkBoxHistogram.Checked)
-                //{
-                //    using Bitmap? histogramBitpam = DrawHistogram(processedImage);
+                if (checkBoxHistogram.Checked)
+                {
+                    using Bitmap? histogramBitmap = DrawHistogram(processedImage);
 
-                //    if (histogramBitpam != null)
-                //        g.DrawImage(histogramBitpam, new Point(imageWidth + 50, imageHeight));
-                //}
+                    if (histogramBitmap != null)
+                        g.DrawImage(histogramBitmap, new Point(imageWidth + 10, imageHeight));
+                }
             }
         }
 
+        // <summary>
+        // DrawHistogram
+        // </summary>
+        private static Bitmap? DrawHistogram(YUVImage parImage)
+        {
+            ArgumentNullException.ThrowIfNull(parImage);
 
-        /// <summary>
-        /// DrawHistogram
-        /// </summary>
-        //private static Bitmap? DrawHistogram(GrayscaleByteImage parImage)
-        //{
-        //    if (parImage == null)
-        //        return null;
+            parImage.UpdateHistogram();
 
-        //    Bitmap bitmap = new(512, 320);
+            Bitmap bitmap = new(512, 320);
 
-        //    parImage.UpdateHistogramData();
+            // histogram processedImage
+            for (int x = 0; x < parImage.NormalisedHistogram.Length; x++)
+            {
+                int ymax = (int)Math.Round(parImage.NormalisedHistogram[x] * 300.0);
 
-        //    // histogram processedImage
-        //    for (int x = 0; x < parImage.NormalisedHistogram.Length; x++)
-        //    {
-        //        int ymax = (int)Math.Round(parImage.NormalisedHistogram[x] * 300.0);
+                for (int y = 0; y < ymax; y++)
+                {
+                    bitmap.SetPixel(2 * x, y + 14, Color.Green);
+                    bitmap.SetPixel(2 * x + 1, y + 14, Color.Green);
+                }
+            }
 
-        //        for (int y = 0; y < ymax; y++)
-        //        {
-        //            bitmap.SetPixel(2 * x, y + 14, Color.Green);
-        //            bitmap.SetPixel(2 * x + 1, y + 14, Color.Green);
-        //        }
-        //    }
+            // cumulative histogram
+            for (int x = 0; x < parImage.CumulativeNormalisedHistogram.Length; x++)
+            {
+                int y = (int)Math.Round(parImage.CumulativeNormalisedHistogram[x] * 300.0);
 
-        //    // cumulative histogram
-        //    for (int x = 0; x < parImage.CumulativeNormalisedHistogram.Length; x++)
-        //    {
-        //        int y = (int)Math.Round(parImage.CumulativeNormalisedHistogram[x] * 300.0);
+                bitmap.SetPixel(2 * x, y + 14, Color.Red);
+                bitmap.SetPixel(2 * x + 1, y + 14, Color.Red);
+            }
 
-        //        bitmap.SetPixel(2 * x, y + 14, Color.Red);
-        //        bitmap.SetPixel(2 * x + 1, y + 14, Color.Red);
-        //    }
+            bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
 
-        //    bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            using Graphics gb = Graphics.FromImage(bitmap);
+            gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 15), new Point(bitmap.Width, bitmap.Height - 15));
+            gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 16), new Point(bitmap.Width, bitmap.Height - 16));
 
-        //    using Graphics gb = Graphics.FromImage(bitmap);
-        //    gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 15), new Point(bitmap.Width, bitmap.Height - 15));
-        //    gb.DrawLine(Pens.Gray, new Point(0, bitmap.Height - 16), new Point(bitmap.Width, bitmap.Height - 16));
+            using Font f = new("Arial Narrow", 8);
 
-        //    using Font f = new("Arial Narrow", 8);
+            for (int x = 0; x < bitmap.Width; x += 20)
+            {
+                gb.DrawLine(Pens.Gray, new Point(x, bitmap.Height - 14), new Point(x, bitmap.Height - 6));
+                gb.DrawString((x / 2).ToString(), f, Brushes.Gray, new PointF(x, bitmap.Height - 14));
+            }
 
-        //    for (int x = 0; x < bitmap.Width; x += 20)
-        //    {
-        //        gb.DrawLine(Pens.Gray, new Point(x, bitmap.Height - 14), new Point(x, bitmap.Height - 6));
-        //        gb.DrawString((x / 2).ToString(), f, Brushes.Gray, new PointF(x, bitmap.Height - 14));
-        //    }
-
-        //    return bitmap;
-        //}
+            return bitmap;
+        }
 
 
         /// <summary>

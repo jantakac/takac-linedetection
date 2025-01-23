@@ -63,11 +63,8 @@
         }
 
         /// <summary>
-        /// 
+        /// CreateGaussianKernel
         /// </summary>
-        /// <param name="radius"></param>
-        /// <param name="sigma"></param>
-        /// <returns></returns>
         private static void CreateGaussianKernel()
         {
             int size = radius * 2 + 1;

@@ -10,13 +10,21 @@ namespace LineDetection.MathImageProcessing
         private readonly int width;
         private readonly int height;
         private readonly byte[] bytes;
-        private uint[] histogram = new uint[1];
-        private float[] intensityPropabilities = new float[1];
-        private float intensitySum;
+
 
         public int Width { get { return width; } }
         public int Height { get { return height; } }
         public byte[] Bytes => bytes;
+
+        private readonly int histogramMinimum;
+        private readonly int histogramMaximum;
+
+        private uint[] histogram = new uint[1];
+        private float[] intensityPropabilities = new float[1];
+        private float intensitySum;
+        private readonly float[] normalizedHistogram = new float[256];
+        private readonly uint[] cumulativeHistogram = new uint[256];
+        private readonly float[] cumulativeNormalizedHistogram = new float[256];
 
         // !!! - warning - before asking these two values, first histogram has to be updated by asking it's value
         public float[] IntensityPropabilities { get { return intensityPropabilities; } }
@@ -51,6 +59,10 @@ namespace LineDetection.MathImageProcessing
             }
         }
 
+        public float[] NormalisedHistogram { get { return normalizedHistogram; } }
+        public uint[] CumulativeHistogram { get { return cumulativeHistogram; } }
+        public float[] CumulativeNormalisedHistogram { get { return cumulativeNormalizedHistogram; } }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -76,7 +88,7 @@ namespace LineDetection.MathImageProcessing
         /// <summary>
         /// Update histogram
         /// </summary>
-        private void UpdateHistogram()
+        public void UpdateHistogram()
         {
             var pixelCount = bytes.Length;
 
@@ -95,6 +107,38 @@ namespace LineDetection.MathImageProcessing
             {
                 intensityPropabilities[i] = (float)histogram[i] / pixelCount;
                 intensitySum += i * intensityPropabilities[i];
+            }
+
+            uint histogramMinimum = uint.MaxValue;
+            uint histogramMaximum = uint.MinValue;
+
+            // find min and max
+            for (int i = 0; i < 256; i++)
+            {
+                if (histogram[i] > histogramMaximum)
+                    histogramMaximum = histogram[i];
+
+                if (histogram[i] < histogramMinimum)
+                    histogramMinimum = histogram[i];
+            }
+
+            // normalize histogram
+            for (int i = 0; i < 256; i++)
+            {
+                normalizedHistogram[i] = (float)histogram[i] / histogramMaximum;
+            }
+
+            cumulativeHistogram[0] = histogram[0];
+            // cumulative histogram
+            for (int i = 1; i < 256; i++)
+            {
+                cumulativeHistogram[i] = histogram[i] + cumulativeHistogram[i - 1];
+            }
+
+            // normalise cumulative histogram
+            for (int i = 0; i < 256; i++)
+            {
+                cumulativeNormalizedHistogram[i] = (float)cumulativeHistogram[i] / cumulativeHistogram[255];
             }
         }
 
