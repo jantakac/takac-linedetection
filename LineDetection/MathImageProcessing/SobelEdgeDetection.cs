@@ -27,7 +27,7 @@
 
                 int edgeCount = 0;
 
-                for (int x = 4; x < image.Width - 4; x++)
+                for (int x = 3; x < image.Width - 3; x++)
                 {
                     // sobel kernel for line
                     int sum = image.Bytes[x - 3 + y] * -1 + 

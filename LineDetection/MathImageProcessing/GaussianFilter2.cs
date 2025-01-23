@@ -26,7 +26,7 @@
         {
             set
             {
-                if (value < 2 || value > 10)
+                if (value < 3 || value > 20)
                     throw new ArgumentException("Gaussian filter - wrong radius");
 
                 radius = value;

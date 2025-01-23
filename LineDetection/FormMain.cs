@@ -255,12 +255,27 @@ namespace LineDetection
                 textBoxMessages.AppendText($">>> Image clone - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
             }
 
-            if (checkBoxGaussianBlur.Checked)
+            if (checkBoxGaussianBlur1.Checked)
             {
                 stopwatch.Restart();
-                GaussianFilter2.Sigma = sigma;
-                GaussianFilter2.Radius = radius;
-                GaussianFilter2.Apply(ref processedImage);
+                if (radioButtonMethod1.Checked)
+                {
+                    GaussianBlurGrayscale.Sigma = sigma;
+                    GaussianBlurGrayscale.Radius = radius;
+                    GaussianBlurGrayscale.Apply(processedImage);
+                }
+                else if (radioButtonMethod2.Checked)
+                {
+                    GaussianFilter2.Sigma = sigma;
+                    GaussianFilter2.Radius = radius;
+                    GaussianFilter2.Apply(ref processedImage);
+                }
+                else if (radioButtonMethod3.Checked)
+                {
+                    GaussianFilter3.Sigma = sigma;
+                    GaussianFilter3.Apply(processedImage);
+                }
+
                 stopwatch.Stop();
                 elapsedTime = stopwatch.Elapsed;
                 textBoxMessages.AppendText($">>> Gaussian Blur Grayscale - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
@@ -364,19 +379,37 @@ namespace LineDetection
             ReloadAndDisplay();
         }
 
-        private void checkBoxResizeImage_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxResizeImage_CheckedChanged(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }
 
-        private void textBoxSigma_TextChanged(object sender, EventArgs e)
+        private void TextBoxSigma_TextChanged(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }
 
-        private void numericUpDownRadius_ValueChanged_1(object sender, EventArgs e)
+        private void NumericUpDownRadius_ValueChanged_1(object sender, EventArgs e)
         {
             ReloadAndDisplay();
+        }
+
+        private void RadioButtonMethod1_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radioButtonMethod1.Checked)
+                ReloadAndDisplay();
+        }
+
+        private void RadioButtonMethod2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButtonMethod2.Checked)
+                ReloadAndDisplay();
+        }
+
+        private void RadioButtonMethod3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButtonMethod3.Checked)
+                ReloadAndDisplay();
         }
     }
 }

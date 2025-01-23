@@ -3,15 +3,15 @@
     /// <summary>
     /// Applies a Gaussian filter to an image.
     /// </summary>
-    public static class GaussianFilter
+    public static class GaussianFilter3
     {
         private static float[] kernel = new float[1];
 
-        public static double Sigma
+        public static float Sigma
         {
             set
             {
-                if (value < 1.0 || value > 5.0)
+                if (value < 0.1f || value > 5.0f)
                     throw new ArgumentException("Gaussian filter - wrong sigma");
 
                 kernel = CreateGaussianKernel(value);
@@ -21,7 +21,7 @@
         /// <summary>
         /// Constructor
         /// </summary>
-        static GaussianFilter()
+        static GaussianFilter3()
         {
             // default kernel size and value
             kernel[0] = 1.0f;

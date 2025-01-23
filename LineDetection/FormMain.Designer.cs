@@ -32,6 +32,10 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             panelLeft = new Panel();
+            groupBoxGaussianBlur = new GroupBox();
+            radioButtonMethod3 = new RadioButton();
+            radioButtonMethod2 = new RadioButton();
+            radioButtonMethod1 = new RadioButton();
             numericUpDownRadius = new NumericUpDown();
             label8 = new Label();
             numericUpDownResizeWidth = new NumericUpDown();
@@ -50,7 +54,7 @@
             numericUpDownStep = new NumericUpDown();
             label4 = new Label();
             checkBoxOtsuTreshold = new CheckBox();
-            checkBoxGaussianBlur = new CheckBox();
+            checkBoxGaussianBlur1 = new CheckBox();
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
@@ -59,8 +63,10 @@
             doubleBufferedPanelDrawing = new Tools.DoubleBufferedPanel();
             panelBottomText = new Panel();
             textBoxMessages = new TextBox();
+            backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             menuStrip1.SuspendLayout();
             panelLeft.SuspendLayout();
+            groupBoxGaussianBlur.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownRadius).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownResizeWidth).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownResizeHeight).BeginInit();
@@ -97,6 +103,7 @@
             // panelLeft
             // 
             panelLeft.BorderStyle = BorderStyle.FixedSingle;
+            panelLeft.Controls.Add(groupBoxGaussianBlur);
             panelLeft.Controls.Add(numericUpDownRadius);
             panelLeft.Controls.Add(label8);
             panelLeft.Controls.Add(numericUpDownResizeWidth);
@@ -115,7 +122,7 @@
             panelLeft.Controls.Add(numericUpDownStep);
             panelLeft.Controls.Add(label4);
             panelLeft.Controls.Add(checkBoxOtsuTreshold);
-            panelLeft.Controls.Add(checkBoxGaussianBlur);
+            panelLeft.Controls.Add(checkBoxGaussianBlur1);
             panelLeft.Controls.Add(label3);
             panelLeft.Controls.Add(label2);
             panelLeft.Controls.Add(label1);
@@ -126,23 +133,70 @@
             panelLeft.Size = new Size(275, 960);
             panelLeft.TabIndex = 1;
             // 
+            // groupBoxGaussianBlur
+            // 
+            groupBoxGaussianBlur.Controls.Add(radioButtonMethod3);
+            groupBoxGaussianBlur.Controls.Add(radioButtonMethod2);
+            groupBoxGaussianBlur.Controls.Add(radioButtonMethod1);
+            groupBoxGaussianBlur.Location = new Point(24, 256);
+            groupBoxGaussianBlur.Name = "groupBoxGaussianBlur";
+            groupBoxGaussianBlur.Size = new Size(94, 98);
+            groupBoxGaussianBlur.TabIndex = 21;
+            groupBoxGaussianBlur.TabStop = false;
+            groupBoxGaussianBlur.Text = "Filter method";
+            // 
+            // radioButtonMethod3
+            // 
+            radioButtonMethod3.AutoSize = true;
+            radioButtonMethod3.Location = new Point(5, 72);
+            radioButtonMethod3.Name = "radioButtonMethod3";
+            radioButtonMethod3.Size = new Size(76, 19);
+            radioButtonMethod3.TabIndex = 2;
+            radioButtonMethod3.Text = "Method 3";
+            radioButtonMethod3.UseVisualStyleBackColor = true;
+            radioButtonMethod3.CheckedChanged += RadioButtonMethod3_CheckedChanged;
+            // 
+            // radioButtonMethod2
+            // 
+            radioButtonMethod2.AutoSize = true;
+            radioButtonMethod2.Location = new Point(5, 47);
+            radioButtonMethod2.Name = "radioButtonMethod2";
+            radioButtonMethod2.Size = new Size(76, 19);
+            radioButtonMethod2.TabIndex = 1;
+            radioButtonMethod2.Text = "Method 2";
+            radioButtonMethod2.UseVisualStyleBackColor = true;
+            radioButtonMethod2.CheckedChanged += RadioButtonMethod2_CheckedChanged;
+            // 
+            // radioButtonMethod1
+            // 
+            radioButtonMethod1.AutoSize = true;
+            radioButtonMethod1.Checked = true;
+            radioButtonMethod1.Location = new Point(5, 22);
+            radioButtonMethod1.Name = "radioButtonMethod1";
+            radioButtonMethod1.Size = new Size(76, 19);
+            radioButtonMethod1.TabIndex = 0;
+            radioButtonMethod1.TabStop = true;
+            radioButtonMethod1.Text = "Method 1";
+            radioButtonMethod1.UseVisualStyleBackColor = true;
+            radioButtonMethod1.CheckedChanged += RadioButtonMethod1_CheckedChanged;
+            // 
             // numericUpDownRadius
             // 
-            numericUpDownRadius.Location = new Point(188, 253);
-            numericUpDownRadius.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
-            numericUpDownRadius.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
+            numericUpDownRadius.Location = new Point(188, 255);
+            numericUpDownRadius.Maximum = new decimal(new int[] { 20, 0, 0, 0 });
+            numericUpDownRadius.Minimum = new decimal(new int[] { 3, 0, 0, 0 });
             numericUpDownRadius.Name = "numericUpDownRadius";
             numericUpDownRadius.Size = new Size(80, 23);
             numericUpDownRadius.TabIndex = 20;
             numericUpDownRadius.TextAlign = HorizontalAlignment.Right;
             numericUpDownRadius.Value = new decimal(new int[] { 3, 0, 0, 0 });
-            numericUpDownRadius.ValueChanged += numericUpDownRadius_ValueChanged_1;
+            numericUpDownRadius.ValueChanged += NumericUpDownRadius_ValueChanged_1;
             // 
             // label8
             // 
             label8.AutoSize = true;
             label8.Font = new Font("Segoe UI", 9F);
-            label8.Location = new Point(146, 256);
+            label8.Location = new Point(146, 258);
             label8.Name = "label8";
             label8.Size = new Size(39, 15);
             label8.TabIndex = 18;
@@ -197,21 +251,21 @@
             checkBoxResizeImage.TabIndex = 13;
             checkBoxResizeImage.Text = "Resize image";
             checkBoxResizeImage.UseVisualStyleBackColor = true;
-            checkBoxResizeImage.CheckedChanged += checkBoxResizeImage_CheckedChanged;
+            checkBoxResizeImage.CheckedChanged += CheckBoxResizeImage_CheckedChanged;
             // 
             // textBoxSigma
             // 
-            textBoxSigma.Location = new Point(186, 224);
+            textBoxSigma.Location = new Point(186, 226);
             textBoxSigma.Name = "textBoxSigma";
             textBoxSigma.Size = new Size(82, 23);
             textBoxSigma.TabIndex = 12;
-            textBoxSigma.Text = "1,5";
+            textBoxSigma.Text = "3";
             textBoxSigma.TextAlign = HorizontalAlignment.Right;
-            textBoxSigma.TextChanged += textBoxSigma_TextChanged;
+            textBoxSigma.TextChanged += TextBoxSigma_TextChanged;
             // 
             // buttonRefresh
             // 
-            buttonRefresh.Location = new Point(4, 397);
+            buttonRefresh.Location = new Point(4, 476);
             buttonRefresh.Name = "buttonRefresh";
             buttonRefresh.Size = new Size(75, 23);
             buttonRefresh.TabIndex = 11;
@@ -222,7 +276,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(5, 172);
+            label5.Location = new Point(5, 171);
             label5.Name = "label5";
             label5.Size = new Size(101, 15);
             label5.TabIndex = 10;
@@ -231,7 +285,7 @@
             // checkBoxSobelEdge
             // 
             checkBoxSobelEdge.AutoSize = true;
-            checkBoxSobelEdge.Location = new Point(5, 314);
+            checkBoxSobelEdge.Location = new Point(5, 392);
             checkBoxSobelEdge.Name = "checkBoxSobelEdge";
             checkBoxSobelEdge.Size = new Size(118, 19);
             checkBoxSobelEdge.TabIndex = 9;
@@ -242,7 +296,7 @@
             // checkBoxFitBezier
             // 
             checkBoxFitBezier.AutoSize = true;
-            checkBoxFitBezier.Location = new Point(5, 342);
+            checkBoxFitBezier.Location = new Point(5, 420);
             checkBoxFitBezier.Name = "checkBoxFitBezier";
             checkBoxFitBezier.Size = new Size(137, 19);
             checkBoxFitBezier.TabIndex = 8;
@@ -253,7 +307,7 @@
             // checkBoxHistogram
             // 
             checkBoxHistogram.AutoSize = true;
-            checkBoxHistogram.Location = new Point(5, 370);
+            checkBoxHistogram.Location = new Point(5, 448);
             checkBoxHistogram.Name = "checkBoxHistogram";
             checkBoxHistogram.Size = new Size(117, 19);
             checkBoxHistogram.TabIndex = 8;
@@ -287,7 +341,7 @@
             // 
             // numericUpDownStep
             // 
-            numericUpDownStep.Location = new Point(188, 170);
+            numericUpDownStep.Location = new Point(188, 169);
             numericUpDownStep.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numericUpDownStep.Name = "numericUpDownStep";
             numericUpDownStep.Size = new Size(80, 23);
@@ -300,7 +354,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(169, 225);
+            label4.Location = new Point(169, 227);
             label4.Name = "label4";
             label4.Size = new Size(19, 21);
             label4.TabIndex = 6;
@@ -309,7 +363,7 @@
             // checkBoxOtsuTreshold
             // 
             checkBoxOtsuTreshold.AutoSize = true;
-            checkBoxOtsuTreshold.Location = new Point(5, 286);
+            checkBoxOtsuTreshold.Location = new Point(5, 364);
             checkBoxOtsuTreshold.Name = "checkBoxOtsuTreshold";
             checkBoxOtsuTreshold.Size = new Size(131, 19);
             checkBoxOtsuTreshold.TabIndex = 5;
@@ -317,16 +371,16 @@
             checkBoxOtsuTreshold.UseVisualStyleBackColor = true;
             checkBoxOtsuTreshold.CheckedChanged += CheckBoxOtsuTreshold_CheckedChanged;
             // 
-            // checkBoxGaussianBlur
+            // checkBoxGaussianBlur1
             // 
-            checkBoxGaussianBlur.AutoSize = true;
-            checkBoxGaussianBlur.Location = new Point(5, 226);
-            checkBoxGaussianBlur.Name = "checkBoxGaussianBlur";
-            checkBoxGaussianBlur.Size = new Size(131, 19);
-            checkBoxGaussianBlur.TabIndex = 5;
-            checkBoxGaussianBlur.Text = "Apply Gaussian blur";
-            checkBoxGaussianBlur.UseVisualStyleBackColor = true;
-            checkBoxGaussianBlur.CheckedChanged += CheckBoxGaussianBlur_CheckedChanged;
+            checkBoxGaussianBlur1.AutoSize = true;
+            checkBoxGaussianBlur1.Location = new Point(5, 229);
+            checkBoxGaussianBlur1.Name = "checkBoxGaussianBlur1";
+            checkBoxGaussianBlur1.Size = new Size(131, 19);
+            checkBoxGaussianBlur1.TabIndex = 5;
+            checkBoxGaussianBlur1.Text = "Apply Gaussian blur";
+            checkBoxGaussianBlur1.UseVisualStyleBackColor = true;
+            checkBoxGaussianBlur1.CheckedChanged += CheckBoxGaussianBlur_CheckedChanged;
             // 
             // label3
             // 
@@ -420,6 +474,8 @@
             menuStrip1.PerformLayout();
             panelLeft.ResumeLayout(false);
             panelLeft.PerformLayout();
+            groupBoxGaussianBlur.ResumeLayout(false);
+            groupBoxGaussianBlur.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownRadius).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownResizeWidth).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownResizeHeight).EndInit();
@@ -445,7 +501,7 @@
         private Label label3;
         private Label label2;
         private Label label4;
-        private CheckBox checkBoxGaussianBlur;
+        private CheckBox checkBoxGaussianBlur1;
         private NumericUpDown numericUpDownWidth;
         private NumericUpDown numericUpDownHeight;
         private CheckBox checkBoxOtsuTreshold;
@@ -466,5 +522,10 @@
         private Label label7;
         private Label label8;
         private NumericUpDown numericUpDownRadius;
+        private GroupBox groupBoxGaussianBlur;
+        private RadioButton radioButtonMethod3;
+        private RadioButton radioButtonMethod2;
+        private RadioButton radioButtonMethod1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
