@@ -6,15 +6,21 @@
     public static class GaussianFilter3
     {
         private static float[] kernel = new float[1];
+        private static float sigma = 1.0f;
 
         public static float Sigma
         {
             set
             {
+                if (value == sigma)
+                    return;
+
                 if (value < 0.1f || value > 5.0f)
                     throw new ArgumentException("Gaussian filter - wrong sigma");
 
-                kernel = CreateGaussianKernel(value);
+                sigma = value;
+
+                CreateGaussianKernel();
             }
         }
 
@@ -23,8 +29,7 @@
         /// </summary>
         static GaussianFilter3()
         {
-            // default kernel size and value
-            kernel[0] = 1.0f;
+            CreateGaussianKernel();
         }
 
         /// <summary>
@@ -62,12 +67,12 @@
         /// Generates a 1D Gaussian kernel of size (2*radius + 1).
         /// radius = (int)Math.Ceiling(3 * sigma) by default.
         /// </summary>
-        private static float[] CreateGaussianKernel(double sigma)
+        private static void CreateGaussianKernel()
         {
             var radius = (int)Math.Ceiling(3 * sigma);
             var size = 2 * radius + 1;
 
-            var kernel = new float[size];
+            kernel = new float[size];
             var sum = 0.0;
             var twoSigmaSq = 2.0 * sigma * sigma;
 
@@ -83,8 +88,6 @@
             {
                 kernel[i] /= (float)sum;
             }
-
-            return kernel;
         }
 
         /// <summary>

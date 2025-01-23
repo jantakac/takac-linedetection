@@ -32,6 +32,7 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             panelLeft = new Panel();
+            checkBoxResizeWithGauss = new CheckBox();
             groupBoxGaussianBlur = new GroupBox();
             radioButtonMethod3 = new RadioButton();
             radioButtonMethod2 = new RadioButton();
@@ -54,7 +55,7 @@
             numericUpDownStep = new NumericUpDown();
             label4 = new Label();
             checkBoxOtsuTreshold = new CheckBox();
-            checkBoxGaussianBlur1 = new CheckBox();
+            checkBoxGaussianBlur = new CheckBox();
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
@@ -103,6 +104,7 @@
             // panelLeft
             // 
             panelLeft.BorderStyle = BorderStyle.FixedSingle;
+            panelLeft.Controls.Add(checkBoxResizeWithGauss);
             panelLeft.Controls.Add(groupBoxGaussianBlur);
             panelLeft.Controls.Add(numericUpDownRadius);
             panelLeft.Controls.Add(label8);
@@ -122,7 +124,7 @@
             panelLeft.Controls.Add(numericUpDownStep);
             panelLeft.Controls.Add(label4);
             panelLeft.Controls.Add(checkBoxOtsuTreshold);
-            panelLeft.Controls.Add(checkBoxGaussianBlur1);
+            panelLeft.Controls.Add(checkBoxGaussianBlur);
             panelLeft.Controls.Add(label3);
             panelLeft.Controls.Add(label2);
             panelLeft.Controls.Add(label1);
@@ -132,6 +134,17 @@
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(275, 960);
             panelLeft.TabIndex = 1;
+            // 
+            // checkBoxResizeWithGauss
+            // 
+            checkBoxResizeWithGauss.AutoSize = true;
+            checkBoxResizeWithGauss.Location = new Point(105, 201);
+            checkBoxResizeWithGauss.Name = "checkBoxResizeWithGauss";
+            checkBoxResizeWithGauss.Size = new Size(68, 19);
+            checkBoxResizeWithGauss.TabIndex = 22;
+            checkBoxResizeWithGauss.Text = "+ Gauss";
+            checkBoxResizeWithGauss.UseVisualStyleBackColor = true;
+            checkBoxResizeWithGauss.CheckedChanged += CheckBoxResizeWithGauss_CheckedChanged;
             // 
             // groupBoxGaussianBlur
             // 
@@ -371,16 +384,16 @@
             checkBoxOtsuTreshold.UseVisualStyleBackColor = true;
             checkBoxOtsuTreshold.CheckedChanged += CheckBoxOtsuTreshold_CheckedChanged;
             // 
-            // checkBoxGaussianBlur1
+            // checkBoxGaussianBlur
             // 
-            checkBoxGaussianBlur1.AutoSize = true;
-            checkBoxGaussianBlur1.Location = new Point(5, 229);
-            checkBoxGaussianBlur1.Name = "checkBoxGaussianBlur1";
-            checkBoxGaussianBlur1.Size = new Size(131, 19);
-            checkBoxGaussianBlur1.TabIndex = 5;
-            checkBoxGaussianBlur1.Text = "Apply Gaussian blur";
-            checkBoxGaussianBlur1.UseVisualStyleBackColor = true;
-            checkBoxGaussianBlur1.CheckedChanged += CheckBoxGaussianBlur_CheckedChanged;
+            checkBoxGaussianBlur.AutoSize = true;
+            checkBoxGaussianBlur.Location = new Point(5, 229);
+            checkBoxGaussianBlur.Name = "checkBoxGaussianBlur";
+            checkBoxGaussianBlur.Size = new Size(131, 19);
+            checkBoxGaussianBlur.TabIndex = 5;
+            checkBoxGaussianBlur.Text = "Apply Gaussian blur";
+            checkBoxGaussianBlur.UseVisualStyleBackColor = true;
+            checkBoxGaussianBlur.CheckedChanged += CheckBoxGaussianBlur_CheckedChanged;
             // 
             // label3
             // 
@@ -501,7 +514,7 @@
         private Label label3;
         private Label label2;
         private Label label4;
-        private CheckBox checkBoxGaussianBlur1;
+        private CheckBox checkBoxGaussianBlur;
         private NumericUpDown numericUpDownWidth;
         private NumericUpDown numericUpDownHeight;
         private CheckBox checkBoxOtsuTreshold;
@@ -527,5 +540,6 @@
         private RadioButton radioButtonMethod2;
         private RadioButton radioButtonMethod1;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private CheckBox checkBoxResizeWithGauss;
     }
 }

@@ -10,6 +10,9 @@
         {
             set
             {
+                if (value != sigma)
+                    return;
+
                 if (value < 0.1f || value > 10.0f)
                     throw new ArgumentException("Gaussian filter - wrong sigma");
 
@@ -23,6 +26,9 @@
         {
             set
             {
+                if (value != radius)
+                    return;
+
                 if (value < 3 || value > 20)
                     throw new ArgumentException("Gaussian filter - wrong radius");
 

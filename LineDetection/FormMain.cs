@@ -243,11 +243,24 @@ namespace LineDetection
 
             if (checkBoxResizeImage.Checked)
             {
-                stopwatch.Restart();
-                processedImage = baseImage.ResizeGrayscaleImageBilinear(resizeWidth, resizeHeight);
-                stopwatch.Stop();
-                elapsedTime = stopwatch.Elapsed;
-                textBoxMessages.AppendText($">>> Image resize - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
+                if (checkBoxResizeWithGauss.Checked)
+                {
+                    stopwatch.Restart();
+                    ResizeGauss.Sigma = sigma;
+                    ResizeGauss.Radius = radius;
+                    processedImage = ResizeGauss.ResizeWithGaussianFilter(baseImage, resizeWidth, resizeHeight);
+                    stopwatch.Stop();
+                    elapsedTime = stopwatch.Elapsed;
+                    textBoxMessages.AppendText($">>> Image resize with Gauss filter - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
+                }
+                else
+                {
+                    stopwatch.Restart();
+                    processedImage = baseImage.ResizeGrayscaleImageBilinear(resizeWidth, resizeHeight);
+                    stopwatch.Stop();
+                    elapsedTime = stopwatch.Elapsed;
+                    textBoxMessages.AppendText($">>> Image resize - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
+                }
             }
             else
             {
@@ -258,7 +271,7 @@ namespace LineDetection
                 textBoxMessages.AppendText($">>> Image clone - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
             }
 
-            if (checkBoxGaussianBlur1.Checked)
+            if (checkBoxGaussianBlur.Checked)
             {
                 stopwatch.Restart();
                 if (radioButtonMethod1.Checked)
@@ -399,7 +412,7 @@ namespace LineDetection
 
         private void RadioButtonMethod1_CheckedChanged(object sender, EventArgs e)
         {
-            if(radioButtonMethod1.Checked)
+            if (radioButtonMethod1.Checked)
                 ReloadAndDisplay();
         }
 
@@ -413,6 +426,23 @@ namespace LineDetection
         {
             if (radioButtonMethod3.Checked)
                 ReloadAndDisplay();
+        }
+
+        private void CheckBoxResizeWithGauss_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxResizeWithGauss.Checked)
+            {
+                groupBoxGaussianBlur.Enabled = false;
+                checkBoxGaussianBlur.Checked = false;
+                checkBoxGaussianBlur.Enabled = false;
+            }
+            else
+            {
+                groupBoxGaussianBlur.Enabled = true;
+                checkBoxGaussianBlur.Enabled = true;
+            }
+
+            ReloadAndDisplay();
         }
     }
 }
