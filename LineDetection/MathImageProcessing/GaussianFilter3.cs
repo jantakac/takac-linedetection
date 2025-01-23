@@ -15,7 +15,7 @@
                 if (value == sigma)
                     return;
 
-                if (value < 0.1f || value > 5.0f)
+                if (value < 0.1f || value > 20.0f)
                     throw new ArgumentException("Gaussian filter - wrong sigma");
 
                 sigma = value;
@@ -93,7 +93,7 @@
         /// <summary>
         /// Horizontal convolution
         /// </summary>
-        private static void HorizontalConvolution(float[] src, float[] dst, int width, int height)
+        public static void HorizontalConvolution(float[] src, float[] dst, int width, int height)
         {
             var radius = kernel.Length / 2;
 
@@ -126,7 +126,7 @@
         /// <summary>
         /// Vertical convolution
         /// </summary>
-        private static void VerticalConvolution(float[] src, float[] dst, int width, int height)
+        public static void VerticalConvolution(float[] src, float[] dst, int width, int height)
         {
             var radius = kernel.Length / 2;
 

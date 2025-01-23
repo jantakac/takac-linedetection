@@ -99,8 +99,6 @@ namespace LineDetection
         {
             ArgumentNullException.ThrowIfNull(parImage);
 
-            parImage.UpdateHistogram();
-
             Bitmap bitmap = new(512, 320);
 
             // histogram processedImage
@@ -261,6 +259,8 @@ namespace LineDetection
                     elapsedTime = stopwatch.Elapsed;
                     textBoxMessages.AppendText($">>> Image resize - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
                 }
+
+                processedImage.UpdateHistogram();
             }
             else
             {
@@ -269,6 +269,8 @@ namespace LineDetection
                 stopwatch.Stop();
                 elapsedTime = stopwatch.Elapsed;
                 textBoxMessages.AppendText($">>> Image clone - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
+
+                processedImage.UpdateHistogram();
             }
 
             if (checkBoxGaussianBlur.Checked)
@@ -295,6 +297,8 @@ namespace LineDetection
                 stopwatch.Stop();
                 elapsedTime = stopwatch.Elapsed;
                 textBoxMessages.AppendText($">>> Gaussian Blur Grayscale - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
+
+                processedImage?.UpdateHistogram();
             }
 
             if (checkBoxOtsuTreshold.Checked)
@@ -303,8 +307,9 @@ namespace LineDetection
                 OtsuTreshold.Apply(processedImage);
                 stopwatch.Stop();
                 elapsedTime = stopwatch.Elapsed;
-
                 textBoxMessages.AppendText($">>> Histogram + Otsu treshold - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
+                
+                processedImage?.UpdateHistogram();
             }
 
             if (checkBoxSobelEdge.Checked)

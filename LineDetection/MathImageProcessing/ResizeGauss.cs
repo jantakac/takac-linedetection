@@ -3,14 +3,14 @@
     public static class ResizeGauss
     {
         private static float[,] kernel = new float[1, 1];
-        private static float sigma = 1.0f;
-        private static int radius = 2;
+        private static float sigma = 3.0f;
+        private static int radius = 3;
 
         public static float Sigma
         {
             set
             {
-                if (value != sigma)
+                if (value == sigma)
                     return;
 
                 if (value < 0.1f || value > 10.0f)
@@ -26,7 +26,7 @@
         {
             set
             {
-                if (value != radius)
+                if (value == radius)
                     return;
 
                 if (value < 3 || value > 20)
@@ -103,8 +103,8 @@
                     int srcXInt = (int)Math.Floor(srcX);
                     int srcYInt = (int)Math.Floor(srcY);
 
-                    double filteredValue = 0.0;
-                    double weightSum = 0.0;
+                    float filteredValue = 0.0f;
+                    float weightSum = 0.0f;
 
                     for (int ky = -halfKernel; ky <= halfKernel; ky++)
                     {
@@ -114,7 +114,7 @@
                             int sampleY = Math.Clamp(srcYInt + ky, 0, originalHeight - 1);
 
                             int sampleIndex = sampleY * originalWidth + sampleX;
-                            double weight = kernel[ky + halfKernel, kx + halfKernel];
+                            float weight = kernel[ky + halfKernel, kx + halfKernel];
 
                             filteredValue += weight * image.Bytes[sampleIndex];
                             weightSum += weight;

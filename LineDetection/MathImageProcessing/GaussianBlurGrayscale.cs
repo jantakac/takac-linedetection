@@ -15,7 +15,7 @@
                 if (value == sigma)
                     return;
 
-                if (value < 0.1f || value > 10.0)
+                if (value < 0.1f || value > 20.0)
                     throw new ArgumentException("Gaussian filter - wrong sigma");
 
                 sigma = value;

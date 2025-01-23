@@ -19,33 +19,31 @@ namespace LineDetection.MathImageProcessing
         private readonly int histogramMinimum;
         private readonly int histogramMaximum;
 
-        private uint[] histogram = new uint[1];
+        private int[] histogram = new int[1];
         private float[] intensityPropabilities = new float[1];
         private float intensitySum;
         private readonly float[] normalizedHistogram = new float[256];
-        private readonly uint[] cumulativeHistogram = new uint[256];
+        private readonly int[] cumulativeHistogram = new int[256];
         private readonly float[] cumulativeNormalizedHistogram = new float[256];
 
         // !!! - warning - before asking these two values, first histogram has to be updated by asking it's value
         public float[] IntensityPropabilities { get { return intensityPropabilities; } }
         public float IntensitySum { get { return intensitySum; } }
 
-        public uint[] Histogram
+        public int[] Histogram
         {
             get
             {
-                UpdateHistogram();
-
                 return histogram;
             }
         }
 
-        public uint[] HistogramCDF
+        public int[] HistogramCDF
         {
             get
             {
                 histogram = Histogram;
-                uint[] brightnessCDF = new uint[256];
+                int[] brightnessCDF = new int[256];
 
                 for (int i = 0; i < 256; ++i)
                 {
@@ -60,7 +58,7 @@ namespace LineDetection.MathImageProcessing
         }
 
         public float[] NormalisedHistogram { get { return normalizedHistogram; } }
-        public uint[] CumulativeHistogram { get { return cumulativeHistogram; } }
+        public int[] CumulativeHistogram { get { return cumulativeHistogram; } }
         public float[] CumulativeNormalisedHistogram { get { return cumulativeNormalizedHistogram; } }
 
         /// <summary>
@@ -92,13 +90,20 @@ namespace LineDetection.MathImageProcessing
         {
             var pixelCount = bytes.Length;
 
-            histogram = new uint[256];
+            histogram = new int[256];
 
             for (int i = 0; i < pixelCount; i++)
             {
                 byte intensity = bytes[i];
                 histogram[intensity]++;
             }
+
+            // transform input to float array
+            var src = histogram.Select(x => (float)x).ToArray();
+            var dst = new float[src.Length];
+
+            GaussianFilter3.HorizontalConvolution(src, dst, 256, 1);
+            histogram = dst.Select(x => (int)x).ToArray();
 
             intensityPropabilities = new float[256];
             intensitySum = 0f;
@@ -109,8 +114,8 @@ namespace LineDetection.MathImageProcessing
                 intensitySum += i * intensityPropabilities[i];
             }
 
-            uint histogramMinimum = uint.MaxValue;
-            uint histogramMaximum = uint.MinValue;
+            int histogramMinimum = int.MaxValue;
+            int histogramMaximum = int.MinValue;
 
             // find min and max
             for (int i = 0; i < 256; i++)
