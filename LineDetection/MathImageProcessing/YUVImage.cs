@@ -11,7 +11,6 @@ namespace LineDetection.MathImageProcessing
         private readonly int height;
         private readonly byte[] bytes;
 
-
         public int Width { get { return width; } }
         public int Height { get { return height; } }
         public byte[] Bytes => bytes;
@@ -20,17 +19,22 @@ namespace LineDetection.MathImageProcessing
         private readonly int histogramMaximum;
 
         private int[] histogram = new int[1];
-        private float[] intensityPropabilities = new float[1];
-        private float intensitySum;
         private readonly float[] normalizedHistogram = new float[256];
         private readonly int[] cumulativeHistogram = new int[256];
-        private readonly double[] normalisedCDF = new double[256];
+        private readonly float[] normalisedCDF = new float[256];
         private byte otsuTreshold = 0;
 
+        private int leftMax = 0;
+        private int leftMaxIndex = 0;
+        private int rightMax = 0;
+        private int rightMaxIndex = 0;
+
         // !!! - warning - before asking these two values, first histogram has to be updated by asking it's value
-        public float[] IntensityPropabilities { get { return intensityPropabilities; } }
-        public float IntensitySum { get { return intensitySum; } }
         public byte OtsuThreshold { get { return otsuTreshold; } }
+        public int LeftMax { get { return leftMax; } }
+        public int LeftMaxIndex { get { return leftMaxIndex; } }
+        public int RightMax { get { return rightMax; } }
+        public int RightMaxIndex { get { return rightMaxIndex; } }
 
         public int[] Histogram
         {
@@ -42,7 +46,7 @@ namespace LineDetection.MathImageProcessing
 
         public float[] NormalisedHistogram { get { return normalizedHistogram; } }
         public int[] CumulativeHistogram { get { return cumulativeHistogram; } }
-        public double[] CumulativeNormalisedHistogram { get { return normalisedCDF; } }
+        public float[] CumulativeNormalisedHistogram { get { return normalisedCDF; } }
 
         /// <summary>
         /// Constructor
@@ -89,14 +93,14 @@ namespace LineDetection.MathImageProcessing
             GaussianFilter3.HorizontalConvolution(src, dst, 256, 1);
             histogram = dst.Select(x => (int)x).ToArray();
 
-            intensityPropabilities = new float[256];
-            intensitySum = 0f;
+            //intensityPropabilities = new double[256];
+            //intensitySum = 0f;
 
-            for (int i = 0; i < 256; i++)
-            {
-                intensityPropabilities[i] = (float)histogram[i] / pixelCount;
-                intensitySum += i * intensityPropabilities[i];
-            }
+            //for (int i = 0; i < 256; i++)
+            //{
+            //    intensityPropabilities[i] = (double)histogram[i] / pixelCount;
+            //    intensitySum += i * intensityPropabilities[i];
+            //}
 
             int histogramMinimum = int.MaxValue;
             int histogramMaximum = int.MinValue;
@@ -117,14 +121,7 @@ namespace LineDetection.MathImageProcessing
                 normalizedHistogram[i] = (float)histogram[i] / histogramMaximum;
             }
 
-            cumulativeHistogram[0] = histogram[0];
-            // cumulative histogram
-            for (int i = 1; i < 256; i++)
-            {
-                cumulativeHistogram[i] = histogram[i] + cumulativeHistogram[i - 1];
-            }
-
-            double sum = 0;
+            float sum = 0;
             for (int i = 0; i < histogram.Length; i++)
             {
                 sum += histogram[i];
@@ -138,6 +135,27 @@ namespace LineDetection.MathImageProcessing
             }
 
             otsuTreshold = OtsuTreshold.GetOtsuThreshold(this);
+
+            // find min and max
+            for (int i = 0; i < 256; i++)
+            {
+                if (i < otsuTreshold)
+                {
+                    if (histogram[i] > leftMax)
+                    {
+                        leftMax = histogram[i];
+                        leftMaxIndex = i;
+                    }
+                }
+                else if (i > otsuTreshold)
+                {
+                    if (histogram[i] > rightMax)
+                    {
+                        rightMax = histogram[i];
+                        rightMaxIndex = i;
+                    }
+                }
+            }
         }
 
         /// <summary>

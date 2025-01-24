@@ -120,6 +120,24 @@ namespace LineDetection
                         bitmap.SetPixel(2 * x + 1, y + 14, Color.Orange);
                     }
                 }
+
+                if (x == parImage.LeftMaxIndex)
+                {
+                    for (int y = 0; y < 300; y++)
+                    {
+                        bitmap.SetPixel(2 * x, y + 14, Color.Blue);
+                        bitmap.SetPixel(2 * x + 1, y + 14, Color.Blue);
+                    }
+                }
+
+                if (x == parImage.RightMaxIndex)
+                {
+                    for (int y = 0; y < 300; y++)
+                    {
+                        bitmap.SetPixel(2 * x, y + 14, Color.Blue);
+                        bitmap.SetPixel(2 * x + 1, y + 14, Color.Blue);
+                    }
+                }
             }
 
             // cumulative histogram

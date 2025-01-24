@@ -14,6 +14,34 @@
 
             var threshold = GetOtsuThreshold(image);
 
+            int leftMax = 0;
+            int rightMax = 0;
+            int leftMaxIndex = 128;
+            int rightMaxIndex = 128;
+
+            // find min and max
+            for (int i = 0; i < 256; i++)
+            {
+                if (i < threshold)
+                {
+                    if (image.Histogram[i] > leftMax)
+                    {
+                        leftMax = image.Histogram[i];
+                        leftMaxIndex = i;
+                    }
+                }
+                else if (i > threshold)
+                {
+                    if (image.Histogram[i] > rightMax)
+                    {
+                        rightMax = image.Histogram[i];
+                        rightMaxIndex = i;
+                    }
+                }
+            }
+
+            int deltaMode = rightMaxIndex - leftMaxIndex;
+
             int width = image.Width;
             int height = image.Height;
 
@@ -35,8 +63,31 @@
         /// </summary>
         /// <param name="grayscaleData"></param>
         /// <returns></returns>
-        public static byte GetOtsuThreshold(YUVImage input)
+        public static byte GetOtsuThreshold(YUVImage parImage)
         {
+            ArgumentNullException.ThrowIfNull(parImage);
+
+            var pixelCount = parImage.Width * parImage.Height;
+
+            var intensityHistogram = new int[256];
+            for (int i = 0; i < pixelCount; i++)
+            {
+                byte intensity = parImage.Bytes[i];
+                intensityHistogram[intensity]++;
+            }
+
+            var intensityProbabilities = new float[256];
+            for (int i = 0; i < 256; i++)
+            {
+                intensityProbabilities[i] = (float)intensityHistogram[i] / pixelCount;
+            }
+
+            var totalIntensitySum = 0f;
+            for (int i = 0; i < 256; i++)
+            {
+                totalIntensitySum += i * intensityProbabilities[i];
+            }
+
             var bgWeight = 0f;
             var bgIntensity = 0f;
             var maxVariance = -1f;
@@ -44,8 +95,8 @@
 
             for (int i = 0; i < 256; i++)
             {
-                bgWeight += input.IntensityPropabilities[i];
-                bgIntensity += i * input.IntensityPropabilities[i];
+                bgWeight += intensityProbabilities[i];
+                bgIntensity += i * intensityProbabilities[i];
 
                 var fgWeight = 1f - bgWeight;
 
@@ -53,7 +104,7 @@
                     continue;
 
                 var bgMean = bgIntensity / bgWeight;
-                var fgMean = (input.IntensitySum - bgIntensity) / fgWeight;
+                var fgMean = (totalIntensitySum - bgIntensity) / fgWeight;
 
                 var meanDiff = bgMean - fgMean;
                 var variance = bgWeight * fgWeight * meanDiff * meanDiff;
@@ -64,6 +115,9 @@
                     bestThreshold = (byte)i;
                 }
             }
+
+            //FormMain form = Application.OpenForms.OfType<FormMain>().FirstOrDefault();
+            //form?.textBoxMessages.AppendText(parImage.Width + ", " + parImage.Height + ", " + bestThreshold);
 
             return bestThreshold;
         }

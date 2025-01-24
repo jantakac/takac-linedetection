@@ -465,7 +465,7 @@
             textBoxMessages.Location = new Point(0, 0);
             textBoxMessages.Multiline = true;
             textBoxMessages.Name = "textBoxMessages";
-            textBoxMessages.ScrollBars = ScrollBars.Horizontal;
+            textBoxMessages.ScrollBars = ScrollBars.Vertical;
             textBoxMessages.Size = new Size(1297, 125);
             textBoxMessages.TabIndex = 0;
             // 
@@ -523,7 +523,6 @@
         private Label label5;
         private NumericUpDown numericUpDownStep;
         private Panel panelBottomText;
-        private TextBox textBoxMessages;
         private Button buttonRefresh;
         private CheckBox checkBoxFitBezier;
         private TextBox textBoxSigma;
@@ -541,5 +540,6 @@
         private RadioButton radioButtonMethod1;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private CheckBox checkBoxResizeWithGauss;
+        public TextBox textBoxMessages;
     }
 }
