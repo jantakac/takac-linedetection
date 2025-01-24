@@ -14,8 +14,6 @@
 
             var threshold = GetOtsuThreshold(image);
 
-            int inflationPointCount = image.CountInflectionPoints();
-
             int width = image.Width;
             int height = image.Height;
 
@@ -37,7 +35,7 @@
         /// </summary>
         /// <param name="grayscaleData"></param>
         /// <returns></returns>
-        private static byte GetOtsuThreshold(YUVImage input)
+        public static byte GetOtsuThreshold(YUVImage input)
         {
             var bgWeight = 0f;
             var bgIntensity = 0f;

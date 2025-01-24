@@ -111,6 +111,15 @@ namespace LineDetection
                     bitmap.SetPixel(2 * x, y + 14, Color.Green);
                     bitmap.SetPixel(2 * x + 1, y + 14, Color.Green);
                 }
+
+                if (x == parImage.OtsuThreshold)
+                {
+                    for (int y = 0; y < 300; y++)
+                    {
+                        bitmap.SetPixel(2 * x, y + 14, Color.Orange);
+                        bitmap.SetPixel(2 * x + 1, y + 14, Color.Orange);
+                    }
+                }
             }
 
             // cumulative histogram
