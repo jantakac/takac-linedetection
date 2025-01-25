@@ -18,10 +18,10 @@ namespace LineDetection.MathImageProcessing
         private readonly int histogramMinimum;
         private readonly int histogramMaximum;
 
-        private int[] histogram = new int[1];
+        private int[] histogram = new int[256];
         private readonly float[] normalizedHistogram = new float[256];
         private readonly int[] cumulativeHistogram = new int[256];
-        private readonly float[] normalisedCDF = new float[256];
+        private readonly float[] cumulativeNormalizedHistogram = new float[256];
         private byte otsuTreshold = 0;
 
         private int leftMax = 0;
@@ -36,6 +36,8 @@ namespace LineDetection.MathImageProcessing
         public int RightMax { get { return rightMax; } }
         public int RightMaxIndex { get { return rightMaxIndex; } }
 
+        public bool DebugValues { get; set; } = true;
+
         public int[] Histogram
         {
             get
@@ -44,9 +46,8 @@ namespace LineDetection.MathImageProcessing
             }
         }
 
-        public float[] NormalisedHistogram { get { return normalizedHistogram; } }
-        public int[] CumulativeHistogram { get { return cumulativeHistogram; } }
-        public float[] CumulativeNormalisedHistogram { get { return normalisedCDF; } }
+        public float[] NormalizedHistogram { get { return normalizedHistogram; } }
+        public float[] CumulativeNormalizedHistogram { get { return cumulativeNormalizedHistogram; } }
 
         /// <summary>
         /// Constructor
@@ -116,39 +117,42 @@ namespace LineDetection.MathImageProcessing
             for (int i = 0; i < histogram.Length; i++)
             {
                 sum += histogram[i];
-                normalisedCDF[i] = sum;
+                cumulativeNormalizedHistogram[i] = sum;
             }
 
             // Normalize CDF to [0, 1]
-            for (int i = 0; i < normalisedCDF.Length; i++)
+            for (int i = 0; i < cumulativeNormalizedHistogram.Length; i++)
             {
-                normalisedCDF[i] /= sum;
+                cumulativeNormalizedHistogram[i] /= sum;
             }
 
-            otsuTreshold = OtsuTreshold.GetOtsuThreshold(this);
-
-            leftMax = 0;
-            rightMax = 0;
-            leftMaxIndex = 128;
-            rightMaxIndex = 128;
-
-            // find min and max
-            for (int i = 0; i < 256; i++)
+            if (DebugValues)
             {
-                if (i < otsuTreshold)
+                otsuTreshold = OtsuTreshold.GetOtsuThreshold(this);
+
+                leftMax = 0;
+                rightMax = 0;
+                leftMaxIndex = 128;
+                rightMaxIndex = 128;
+
+                // find min and max
+                for (int i = 0; i < 256; i++)
                 {
-                    if (histogram[i] > leftMax)
+                    if (i < otsuTreshold)
                     {
-                        leftMax = histogram[i];
-                        leftMaxIndex = i;
+                        if (histogram[i] > leftMax)
+                        {
+                            leftMax = histogram[i];
+                            leftMaxIndex = i;
+                        }
                     }
-                }
-                else if (i > otsuTreshold)
-                {
-                    if (histogram[i] > rightMax)
+                    else if (i > otsuTreshold)
                     {
-                        rightMax = histogram[i];
-                        rightMaxIndex = i;
+                        if (histogram[i] > rightMax)
+                        {
+                            rightMax = histogram[i];
+                            rightMaxIndex = i;
+                        }
                     }
                 }
             }

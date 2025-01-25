@@ -81,13 +81,13 @@ namespace LineDetection
 
                 g.DrawImage(bitmap, new Point(imageWidth + 10, 0));
 
-                if (checkBoxHistogram.Checked)
-                {
-                    using Bitmap? histogramBitmap = DrawHistogram(processedImage);
+                //if (checkBoxHistogram.Checked)
+                //{
+                //    using Bitmap? histogramBitmap = DrawHistogram(processedImage);
 
-                    if (histogramBitmap != null)
-                        g.DrawImage(histogramBitmap, new Point(imageWidth + 10, imageHeight));
-                }
+                //    if (histogramBitmap != null)
+                //        g.DrawImage(histogramBitmap, new Point(imageWidth + 10, imageHeight));
+                //}
             }
         }
 
@@ -101,9 +101,9 @@ namespace LineDetection
             Bitmap bitmap = new(512, 320);
 
             // histogram processedImage
-            for (int x = 0; x < parImage.NormalisedHistogram.Length; x++)
+            for (int x = 0; x < parImage.NormalizedHistogram.Length; x++)
             {
-                int ymax = (int)Math.Round(parImage.NormalisedHistogram[x] * 300.0);
+                int ymax = (int)Math.Round(parImage.NormalizedHistogram[x] * 300.0);
 
                 for (int y = 0; y < ymax; y++)
                 {
@@ -111,38 +111,41 @@ namespace LineDetection
                     bitmap.SetPixel(2 * x + 1, y + 14, Color.Green);
                 }
 
-                if (x == parImage.OtsuThreshold)
+                if (parImage.DebugValues)
                 {
-                    for (int y = 0; y < 300; y++)
+                    if (x == parImage.OtsuThreshold)
                     {
-                        bitmap.SetPixel(2 * x, y + 14, Color.Orange);
-                        bitmap.SetPixel(2 * x + 1, y + 14, Color.Orange);
+                        for (int y = 0; y < 300; y++)
+                        {
+                            bitmap.SetPixel(2 * x, y + 14, Color.Orange);
+                            bitmap.SetPixel(2 * x + 1, y + 14, Color.Orange);
+                        }
                     }
-                }
 
-                if (x == parImage.LeftMaxIndex)
-                {
-                    for (int y = 0; y < 300; y++)
+                    if (x == parImage.LeftMaxIndex)
                     {
-                        bitmap.SetPixel(2 * x, y + 14, Color.Blue);
-                        bitmap.SetPixel(2 * x + 1, y + 14, Color.Blue);
+                        for (int y = 0; y < 300; y++)
+                        {
+                            bitmap.SetPixel(2 * x, y + 14, Color.Blue);
+                            bitmap.SetPixel(2 * x + 1, y + 14, Color.Blue);
+                        }
                     }
-                }
 
-                if (x == parImage.RightMaxIndex)
-                {
-                    for (int y = 0; y < 300; y++)
+                    if (x == parImage.RightMaxIndex)
                     {
-                        bitmap.SetPixel(2 * x, y + 14, Color.Blue);
-                        bitmap.SetPixel(2 * x + 1, y + 14, Color.Blue);
+                        for (int y = 0; y < 300; y++)
+                        {
+                            bitmap.SetPixel(2 * x, y + 14, Color.Blue);
+                            bitmap.SetPixel(2 * x + 1, y + 14, Color.Blue);
+                        }
                     }
                 }
             }
 
             // cumulative histogram
-            for (int x = 0; x < parImage.CumulativeNormalisedHistogram.Length; x++)
+            for (int x = 0; x < parImage.CumulativeNormalizedHistogram.Length; x++)
             {
-                int y = (int)Math.Round(parImage.CumulativeNormalisedHistogram[x] * 300.0);
+                int y = (int)Math.Round(parImage.CumulativeNormalizedHistogram[x] * 300.0);
 
                 bitmap.SetPixel(2 * x, y + 14, Color.Red);
                 bitmap.SetPixel(2 * x + 1, y + 14, Color.Red);
@@ -262,6 +265,7 @@ namespace LineDetection
             step = (int)numericUpDownStep.Value;
 
             baseImage = new YUVImage(imageBytes, imageWidth, imageHeight);
+            baseImage.DebugValues = checkBoxDebugValues.Checked;
 
             if (checkBoxResizeImage.Checked)
             {
@@ -284,6 +288,7 @@ namespace LineDetection
                     textBoxMessages.AppendText($">>> Image resize - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
                 }
 
+                processedImage.DebugValues = checkBoxDebugValues.Checked;
                 processedImage.UpdateHistogram();
             }
             else
@@ -294,6 +299,7 @@ namespace LineDetection
                 elapsedTime = stopwatch.Elapsed;
                 textBoxMessages.AppendText($">>> Image clone - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
 
+                processedImage.DebugValues = checkBoxDebugValues.Checked;
                 processedImage.UpdateHistogram();
             }
 
@@ -332,7 +338,7 @@ namespace LineDetection
                 stopwatch.Stop();
                 elapsedTime = stopwatch.Elapsed;
                 textBoxMessages.AppendText($">>> Histogram + Otsu treshold - Elapsed Time (ms): {elapsedTime.TotalMilliseconds}" + "\r\n");
-                
+
                 processedImage?.UpdateHistogram();
             }
 
@@ -435,6 +441,11 @@ namespace LineDetection
         }
 
         private void NumericUpDownRadius_ValueChanged_1(object sender, EventArgs e)
+        {
+            ReloadAndDisplay();
+        }
+
+        private void CheckBoxDebugValues_CheckedChanged(object sender, EventArgs e)
         {
             ReloadAndDisplay();
         }

@@ -65,6 +65,7 @@
             panelBottomText = new Panel();
             textBoxMessages = new TextBox();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            checkBoxDebugValues = new CheckBox();
             menuStrip1.SuspendLayout();
             panelLeft.SuspendLayout();
             groupBoxGaussianBlur.SuspendLayout();
@@ -104,6 +105,7 @@
             // panelLeft
             // 
             panelLeft.BorderStyle = BorderStyle.FixedSingle;
+            panelLeft.Controls.Add(checkBoxDebugValues);
             panelLeft.Controls.Add(checkBoxResizeWithGauss);
             panelLeft.Controls.Add(groupBoxGaussianBlur);
             panelLeft.Controls.Add(numericUpDownRadius);
@@ -481,6 +483,19 @@
             textBoxMessages.Size = new Size(1297, 125);
             textBoxMessages.TabIndex = 0;
             // 
+            // checkBoxDebugValues
+            // 
+            checkBoxDebugValues.AutoSize = true;
+            checkBoxDebugValues.Checked = true;
+            checkBoxDebugValues.CheckState = CheckState.Checked;
+            checkBoxDebugValues.Location = new Point(128, 448);
+            checkBoxDebugValues.Name = "checkBoxDebugValues";
+            checkBoxDebugValues.Size = new Size(97, 19);
+            checkBoxDebugValues.TabIndex = 23;
+            checkBoxDebugValues.Text = "Debug values";
+            checkBoxDebugValues.UseVisualStyleBackColor = true;
+            checkBoxDebugValues.CheckedChanged += CheckBoxDebugValues_CheckedChanged;
+            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -553,5 +568,6 @@
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private CheckBox checkBoxResizeWithGauss;
         public TextBox textBoxMessages;
+        private CheckBox checkBoxDebugValues;
     }
 }
