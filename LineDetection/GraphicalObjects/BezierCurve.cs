@@ -59,44 +59,46 @@ namespace LineDetection.GraphicalObjects
 
             using (Pen pen = new(Color.LightGray))
             {
-                for (int i = 0; i < controlPoints.Count - 1; i++)
-                {
-                    PointF point1 = CoordTrans.GetUVF(controlPoints[i]);
-                    PointF point2 = CoordTrans.GetUVF(controlPoints[i + 1]);
+                pen.DashPattern = dashValues;
 
-                    pen.DashPattern = dashValues;
-                    g.DrawLine(pen, point1, point2);
-                }
+                PointF point1 = CoordTrans.GetUVF(controlPoints[0]);
+                PointF point2 = CoordTrans.GetUVF(controlPoints[1]);
+                g.DrawLine(pen, point1, point2);
+
+                point1 = CoordTrans.GetUVF(controlPoints[^2]);
+                point2 = CoordTrans.GetUVF(controlPoints[^1]);
+                g.DrawLine(pen, point1, point2);
+
             }
 
             // Draw control point anchors
             using var font = new Font("Arial", 10);
             // Draw first control point
             Point controlPoint = CoordTrans.GetUV(controlPoints[0]);
-            Point point = new(controlPoint.X - 5, controlPoint.Y - 5);
-            Rectangle rect = new(point, new Size(10, 10));
+            Point point = new(controlPoint.X - 3, controlPoint.Y - 3);
+            Rectangle rect = new(point, new Size(6, 6));
             g.FillRectangle(ControlPointIsSelected(0) ? Brushes.LimeGreen : Brushes.OrangeRed, rect);
             g.DrawRectangle(Pens.Black, rect);
-            g.DrawString("V start", font, Brushes.Orange, new Point(rect.X + 10, rect.Y - 10));
+            g.DrawString("V start", font, Brushes.Orange, new Point(rect.X + 10, rect.Y - 15));
 
             // Draw intermediate control points
             for (int i = 1; i < controlPoints.Count - 1; i++)
             {
                 controlPoint = CoordTrans.GetUV(controlPoints[i]);
-                point = new Point(controlPoint.X - 5, controlPoint.Y - 5);
-                rect = new Rectangle(point, new Size(10, 10));
-                g.FillRectangle(ControlPointIsSelected(i) ? Brushes.LimeGreen : Brushes.DarkOrange, rect);
+                point = new Point(controlPoint.X - 3, controlPoint.Y - 3);
+                rect = new Rectangle(point, new Size(6, 6));
+                g.FillRectangle(ControlPointIsSelected(i) ? Brushes.DarkOrange : Brushes.LimeGreen, rect);
                 g.DrawRectangle(Pens.Black, rect);
-                g.DrawString("C" + i.ToString(), font, Brushes.Orange, new Point(rect.X + 10, rect.Y + 10));
+                g.DrawString("C" + i.ToString(), font, Brushes.Orange, new Point(rect.X + 5, rect.Y + 5));
             }
 
             // Draw last control point
             controlPoint = CoordTrans.GetUV(controlPoints[controlPoints.Count - 1]);
-            point = new Point(controlPoint.X - 5, controlPoint.Y - 5);
-            rect = new Rectangle(point, new Size(10, 10));
+            point = new Point(controlPoint.X - 3, controlPoint.Y - 3);
+            rect = new Rectangle(point, new Size(6, 6));
             g.FillRectangle(ControlPointIsSelected(controlPoints.Count - 1) ? Brushes.LimeGreen : Brushes.OrangeRed, rect);
             g.DrawRectangle(Pens.Black, rect);
-            g.DrawString("V end", font, Brushes.Orange, new Point(rect.X + 10, rect.Y + 10));
+            g.DrawString("V end", font, Brushes.Orange, new Point(rect.X + 10, rect.Y + 5));
         }
     }
 }

@@ -161,10 +161,12 @@
             // radioButtonMethod3
             // 
             radioButtonMethod3.AutoSize = true;
+            radioButtonMethod3.Checked = true;
             radioButtonMethod3.Location = new Point(5, 72);
             radioButtonMethod3.Name = "radioButtonMethod3";
             radioButtonMethod3.Size = new Size(76, 19);
             radioButtonMethod3.TabIndex = 2;
+            radioButtonMethod3.TabStop = true;
             radioButtonMethod3.Text = "Method 3";
             radioButtonMethod3.UseVisualStyleBackColor = true;
             radioButtonMethod3.CheckedChanged += RadioButtonMethod3_CheckedChanged;
@@ -183,12 +185,10 @@
             // radioButtonMethod1
             // 
             radioButtonMethod1.AutoSize = true;
-            radioButtonMethod1.Checked = true;
             radioButtonMethod1.Location = new Point(5, 22);
             radioButtonMethod1.Name = "radioButtonMethod1";
             radioButtonMethod1.Size = new Size(76, 19);
             radioButtonMethod1.TabIndex = 0;
-            radioButtonMethod1.TabStop = true;
             radioButtonMethod1.Text = "Method 1";
             radioButtonMethod1.UseVisualStyleBackColor = true;
             radioButtonMethod1.CheckedChanged += RadioButtonMethod1_CheckedChanged;
@@ -258,6 +258,8 @@
             // checkBoxResizeImage
             // 
             checkBoxResizeImage.AutoSize = true;
+            checkBoxResizeImage.Checked = true;
+            checkBoxResizeImage.CheckState = CheckState.Checked;
             checkBoxResizeImage.Location = new Point(5, 201);
             checkBoxResizeImage.Name = "checkBoxResizeImage";
             checkBoxResizeImage.Size = new Size(94, 19);
@@ -298,6 +300,8 @@
             // checkBoxSobelEdge
             // 
             checkBoxSobelEdge.AutoSize = true;
+            checkBoxSobelEdge.Checked = true;
+            checkBoxSobelEdge.CheckState = CheckState.Checked;
             checkBoxSobelEdge.Location = new Point(5, 392);
             checkBoxSobelEdge.Name = "checkBoxSobelEdge";
             checkBoxSobelEdge.Size = new Size(118, 19);
@@ -309,6 +313,8 @@
             // checkBoxFitBezier
             // 
             checkBoxFitBezier.AutoSize = true;
+            checkBoxFitBezier.Checked = true;
+            checkBoxFitBezier.CheckState = CheckState.Checked;
             checkBoxFitBezier.Location = new Point(5, 420);
             checkBoxFitBezier.Name = "checkBoxFitBezier";
             checkBoxFitBezier.Size = new Size(137, 19);
@@ -320,6 +326,8 @@
             // checkBoxHistogram
             // 
             checkBoxHistogram.AutoSize = true;
+            checkBoxHistogram.Checked = true;
+            checkBoxHistogram.CheckState = CheckState.Checked;
             checkBoxHistogram.Location = new Point(5, 448);
             checkBoxHistogram.Name = "checkBoxHistogram";
             checkBoxHistogram.Size = new Size(117, 19);
@@ -376,6 +384,8 @@
             // checkBoxOtsuTreshold
             // 
             checkBoxOtsuTreshold.AutoSize = true;
+            checkBoxOtsuTreshold.Checked = true;
+            checkBoxOtsuTreshold.CheckState = CheckState.Checked;
             checkBoxOtsuTreshold.Location = new Point(5, 364);
             checkBoxOtsuTreshold.Name = "checkBoxOtsuTreshold";
             checkBoxOtsuTreshold.Size = new Size(131, 19);
@@ -387,6 +397,8 @@
             // checkBoxGaussianBlur
             // 
             checkBoxGaussianBlur.AutoSize = true;
+            checkBoxGaussianBlur.Checked = true;
+            checkBoxGaussianBlur.CheckState = CheckState.Checked;
             checkBoxGaussianBlur.Location = new Point(5, 229);
             checkBoxGaussianBlur.Name = "checkBoxGaussianBlur";
             checkBoxGaussianBlur.Size = new Size(131, 19);
