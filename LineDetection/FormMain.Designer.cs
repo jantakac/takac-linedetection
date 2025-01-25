@@ -32,6 +32,9 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             panelLeft = new Panel();
+            numericUpDownBackgroundMargin = new NumericUpDown();
+            label9 = new Label();
+            checkBoxDebugValues = new CheckBox();
             checkBoxResizeWithGauss = new CheckBox();
             groupBoxGaussianBlur = new GroupBox();
             radioButtonMethod3 = new RadioButton();
@@ -65,9 +68,9 @@
             panelBottomText = new Panel();
             textBoxMessages = new TextBox();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            checkBoxDebugValues = new CheckBox();
             menuStrip1.SuspendLayout();
             panelLeft.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownBackgroundMargin).BeginInit();
             groupBoxGaussianBlur.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownRadius).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownResizeWidth).BeginInit();
@@ -105,6 +108,8 @@
             // panelLeft
             // 
             panelLeft.BorderStyle = BorderStyle.FixedSingle;
+            panelLeft.Controls.Add(numericUpDownBackgroundMargin);
+            panelLeft.Controls.Add(label9);
             panelLeft.Controls.Add(checkBoxDebugValues);
             panelLeft.Controls.Add(checkBoxResizeWithGauss);
             panelLeft.Controls.Add(groupBoxGaussianBlur);
@@ -136,6 +141,40 @@
             panelLeft.Name = "panelLeft";
             panelLeft.Size = new Size(275, 960);
             panelLeft.TabIndex = 1;
+            // 
+            // numericUpDownBackgroundMargin
+            // 
+            numericUpDownBackgroundMargin.Location = new Point(188, 363);
+            numericUpDownBackgroundMargin.Maximum = new decimal(new int[] { 200, 0, 0, 0 });
+            numericUpDownBackgroundMargin.Name = "numericUpDownBackgroundMargin";
+            numericUpDownBackgroundMargin.Size = new Size(80, 23);
+            numericUpDownBackgroundMargin.TabIndex = 25;
+            numericUpDownBackgroundMargin.TextAlign = HorizontalAlignment.Right;
+            numericUpDownBackgroundMargin.Value = new decimal(new int[] { 40, 0, 0, 0 });
+            numericUpDownBackgroundMargin.ValueChanged += NumericUpDownBackgroundMargin_ValueChanged;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Font = new Font("Segoe UI", 9F);
+            label9.Location = new Point(156, 345);
+            label9.Name = "label9";
+            label9.Size = new Size(112, 15);
+            label9.TabIndex = 24;
+            label9.Text = "Background margin";
+            // 
+            // checkBoxDebugValues
+            // 
+            checkBoxDebugValues.AutoSize = true;
+            checkBoxDebugValues.Checked = true;
+            checkBoxDebugValues.CheckState = CheckState.Checked;
+            checkBoxDebugValues.Location = new Point(128, 448);
+            checkBoxDebugValues.Name = "checkBoxDebugValues";
+            checkBoxDebugValues.Size = new Size(97, 19);
+            checkBoxDebugValues.TabIndex = 23;
+            checkBoxDebugValues.Text = "Debug values";
+            checkBoxDebugValues.UseVisualStyleBackColor = true;
+            checkBoxDebugValues.CheckedChanged += CheckBoxDebugValues_CheckedChanged;
             // 
             // checkBoxResizeWithGauss
             // 
@@ -483,19 +522,6 @@
             textBoxMessages.Size = new Size(1297, 125);
             textBoxMessages.TabIndex = 0;
             // 
-            // checkBoxDebugValues
-            // 
-            checkBoxDebugValues.AutoSize = true;
-            checkBoxDebugValues.Checked = true;
-            checkBoxDebugValues.CheckState = CheckState.Checked;
-            checkBoxDebugValues.Location = new Point(128, 448);
-            checkBoxDebugValues.Name = "checkBoxDebugValues";
-            checkBoxDebugValues.Size = new Size(97, 19);
-            checkBoxDebugValues.TabIndex = 23;
-            checkBoxDebugValues.Text = "Debug values";
-            checkBoxDebugValues.UseVisualStyleBackColor = true;
-            checkBoxDebugValues.CheckedChanged += CheckBoxDebugValues_CheckedChanged;
-            // 
             // FormMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -514,6 +540,7 @@
             menuStrip1.PerformLayout();
             panelLeft.ResumeLayout(false);
             panelLeft.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownBackgroundMargin).EndInit();
             groupBoxGaussianBlur.ResumeLayout(false);
             groupBoxGaussianBlur.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDownRadius).EndInit();
@@ -569,5 +596,7 @@
         private CheckBox checkBoxResizeWithGauss;
         public TextBox textBoxMessages;
         private CheckBox checkBoxDebugValues;
+        private NumericUpDown numericUpDownBackgroundMargin;
+        private Label label9;
     }
 }

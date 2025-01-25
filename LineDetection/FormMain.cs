@@ -221,6 +221,8 @@ namespace LineDetection
             resizeWidth = (int)numericUpDownResizeWidth.Value;
             resizeHeight = (int)numericUpDownResizeHeight.Value;
 
+            OtsuTreshold.BackgroundMargin = (int)numericUpDownBackgroundMargin.Value;
+
             string? selectedString = comboBox1.SelectedValue as string;
 
             if (string.IsNullOrEmpty(selectedString))
@@ -466,6 +468,11 @@ namespace LineDetection
         {
             if (radioButtonMethod3.Checked)
                 ReloadAndDisplay();
+        }
+
+        private void NumericUpDownBackgroundMargin_ValueChanged(object sender, EventArgs e)
+        {
+            ReloadAndDisplay();
         }
 
         private void CheckBoxResizeWithGauss_CheckedChanged(object sender, EventArgs e)

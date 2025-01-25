@@ -74,30 +74,30 @@
         {
             ArgumentNullException.ThrowIfNull(parImage);
 
-            var pixelCount = parImage.Width * parImage.Height;
+            int pixelCount = parImage.Width * parImage.Height;
 
-            var intensityHistogram = new int[256];
+            int[] intensityHistogram = new int[256];
             for (int i = 0; i < pixelCount; i++)
             {
                 byte intensity = parImage.Bytes[i];
                 intensityHistogram[intensity]++;
             }
 
-            var intensityProbabilities = new float[256];
+            float[] intensityProbabilities = new float[256];
             for (int i = 0; i < 256; i++)
             {
                 intensityProbabilities[i] = (float)intensityHistogram[i] / pixelCount;
             }
 
-            var totalIntensitySum = 0f;
+            float totalIntensitySum = 0f;
             for (int i = 0; i < 256; i++)
             {
                 totalIntensitySum += i * intensityProbabilities[i];
             }
 
-            var bgWeight = 0f;
-            var bgIntensity = 0f;
-            var maxVariance = -1f;
+            float bgWeight = 0f;
+            float bgIntensity = 0f;
+            float maxVariance = -1f;
             byte bestThreshold = 0;
 
             for (int i = 0; i < 256; i++)
@@ -105,16 +105,16 @@
                 bgWeight += intensityProbabilities[i];
                 bgIntensity += i * intensityProbabilities[i];
 
-                var fgWeight = 1f - bgWeight;
+                float fgWeight = 1f - bgWeight;
 
                 if (bgWeight <= 0f || fgWeight <= 0f)
                     continue;
 
-                var bgMean = bgIntensity / bgWeight;
-                var fgMean = (totalIntensitySum - bgIntensity) / fgWeight;
+                float bgMean = bgIntensity / bgWeight;
+                float fgMean = (totalIntensitySum - bgIntensity) / fgWeight;
 
-                var meanDiff = bgMean - fgMean;
-                var variance = bgWeight * fgWeight * meanDiff * meanDiff;
+                float meanDiff = bgMean - fgMean;
+                float variance = bgWeight * fgWeight * meanDiff * meanDiff;
 
                 if (variance > maxVariance)
                 {
