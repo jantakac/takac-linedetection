@@ -7,17 +7,16 @@ namespace LineDetection.GraphicalObjects
     {
         #region Properties
 
-        protected readonly List<Vector<double>> controlPoints;
-        protected List<double> segmentLengths;
+        protected readonly List<Vector<float>> controlPoints;
+        protected List<float> segmentLengths;
         protected int curvePrecision = 70;
-        protected double length = 0;
-        protected List<Vector<double>>? curvePoints;
-        protected CoordTransformations ct;
+        protected float length = 0;
+        protected List<Vector<float>>? curvePoints;
 
         /// <summary>
         /// Curve length
         /// </summary>
-        public double Length 
+        public float Length 
         { 
             get 
             { 
@@ -48,11 +47,11 @@ namespace LineDetection.GraphicalObjects
         /// <summary>
         /// Curve control points
         /// </summary>
-        public List<Vector<double>> ControlPoints
+        public List<Vector<float>> ControlPoints
         {
             get
             {
-                var newList = new List<Vector<double>>(controlPoints.Count);
+                var newList = new List<Vector<float>>(controlPoints.Count);
 
                 foreach (var point in controlPoints)
                     newList.Add(point.Clone());
@@ -107,7 +106,7 @@ namespace LineDetection.GraphicalObjects
         /// <summary>
         /// SelectedControlPoint
         /// </summary>
-        public Vector<double>? SelectedControlPoint
+        public Vector<float>? SelectedControlPoint
         {
             get
             {
@@ -121,7 +120,7 @@ namespace LineDetection.GraphicalObjects
         /// <summary>
         /// Matrix
         /// </summary>
-        public Vector<double> this[int index]
+        public Vector<float> this[int index]
         {
             get => controlPoints[index];
             set => controlPoints[index] = value;
@@ -134,7 +133,7 @@ namespace LineDetection.GraphicalObjects
         /// <summary>
         /// Konstruktor
         /// </summary>
-        public CurveBase(List<Vector<double>> parControlPoints, CoordTransformations parCoordTrans)
+        public CurveBase(List<Vector<float>> parControlPoints)
         {
             if (parControlPoints.Count < 4)
                 throw new ArgumentException("Control points error");
@@ -143,7 +142,6 @@ namespace LineDetection.GraphicalObjects
             segmentLengths = [];
             curvePoints = [];
             SelectedControlPointIndices = [];
-            ct = parCoordTrans;
 
             RecalculateCurve();
         }
@@ -153,27 +151,24 @@ namespace LineDetection.GraphicalObjects
         /// <summary>
         /// Is point hit by U, V coordinates
         /// </summary>
-        private bool IsHitByUV(Vector<double> controlPoint, Point p)
+        private static bool IsHitByUV(Vector<float> controlPoint, Point p)
         {
-            Vector<double> xyMatrix = ct.FromUVtoXYVectorDouble(p);
+            Vector<float> xyMatrix = CoordTrans.FromUVtoXYVectorFloat(p);
             PointF xyPoint = new((float)xyMatrix[0] - 2, (float)xyMatrix[1] - 2);
             RectangleF r = new(xyPoint, new Size(4, 4));
             PointF point = new((float)controlPoint[0], (float)controlPoint[1]);
             return r.Contains(point);
         }
-        /// <summary>
-        /// Prepocitanie krivky podla potreby
-        /// </summary>
-        protected abstract void RecalculateCurve();
 
-        public abstract Vector<double> GetPointAndAngleOnCurve(double time, out double angle);
+        protected abstract void RecalculateCurve();
+        public abstract Vector<float> GetPointAndAngleOnCurve(float time, out float angle);
 
         #region Public methods
 
         /// <summary>
         /// Add
         /// </summary>
-        public void Add(Vector<double> point)
+        public void Add(Vector<float> point)
         {
             controlPoints.Add(point);
 
@@ -183,7 +178,7 @@ namespace LineDetection.GraphicalObjects
         /// <summary>
         /// Insert
         /// </summary>
-        public void Insert(int index, Vector<double> point)
+        public void Insert(int index, Vector<float> point)
         {
             controlPoints.Insert(index, point);
 
@@ -193,9 +188,9 @@ namespace LineDetection.GraphicalObjects
         /// <summary>
         /// Remove
         /// </summary>
-        public Vector<double> Remove(int index)
+        public Vector<float> Remove(int index)
         {
-            Vector<double> removedPoint = controlPoints[index];
+            Vector<float> removedPoint = controlPoints[index];
             controlPoints.RemoveAt(index);
 
             RecalculateCurve();
@@ -219,7 +214,7 @@ namespace LineDetection.GraphicalObjects
         /// <summary>
         /// Move
         /// </summary>
-        public void Move(Vector<double> p, int? vID)
+        public void Move(Vector<float> p, int? vID)
         {
             if (vID == null)
                 return;

@@ -7,7 +7,7 @@ namespace LineDetection.GraphicalObjects
         /// <summary>
         /// GetCurvePoints
         /// </summary>
-        public static List<Vector<double>>? GetCurvePoints(BezierCurve? curve, int pointCount)
+        public static List<Vector<float>>? GetCurvePoints(BezierCurve? curve, int pointCount)
         {
             if (curve == null)
                 throw new ArgumentNullException(nameof(curve));
@@ -18,7 +18,7 @@ namespace LineDetection.GraphicalObjects
         /// <summary>
         /// GetCurvePoints
         /// </summary>
-        public static List<Vector<double>>? GetCurvePoints(List<Vector<double>> bezierCurvePoints, int pointCount)
+        public static List<Vector<float>>? GetCurvePoints(List<Vector<float>> bezierCurvePoints, int pointCount)
         {
             if (pointCount < 2)
                 throw new ApplicationException($"Invalid parameter: you must request at least 2 points to be returned from the curve!");
@@ -26,7 +26,7 @@ namespace LineDetection.GraphicalObjects
             if (bezierCurvePoints == null || bezierCurvePoints.Count < 2)
                 return null;
 
-            var result = new Vector<double>[pointCount];
+            var result = new Vector<float>[pointCount];
 
             for (int i = 0; i < pointCount; i++)
             {
@@ -37,18 +37,18 @@ namespace LineDetection.GraphicalObjects
                 else
                     time = i / (float)(pointCount - 1);
 
-                Vector<double> point = GetDeCasteljauPoint(bezierCurvePoints, time, out _);
+                Vector<float> point = GetDeCasteljauPoint(bezierCurvePoints, time, out _);
 
                 result[i] = point;
             }
 
-            return new List<Vector<double>>(result);
+            return new List<Vector<float>>(result);
         }
 
         /// <summary>
         /// GetDeCasteljauPoint
         /// </summary>
-        public static Vector<double> GetDeCasteljauPoint(List<Vector<double>> points, double time, out double angle)
+        public static Vector<float> GetDeCasteljauPoint(List<Vector<float>> points, float time, out float angle)
         {
             angle = 0;
             var currentPoints = points;
@@ -68,7 +68,7 @@ namespace LineDetection.GraphicalObjects
                 }
 
                 // Calculate non-recursively a new list of points. This list will contain 1 less point than the previous list
-                var newPoints = new List<Vector<double>>(currentPoints.Count - 1);
+                var newPoints = new List<Vector<float>>(currentPoints.Count - 1);
 
                 for (int i = 0; i < currentPoints.Count - 1; i++)
                 {
@@ -79,10 +79,10 @@ namespace LineDetection.GraphicalObjects
                     // Calculate a point in between, aligned by the time.
                     // If time == 0, result is point1
                     // If time == 1, result is point2
-                    double x = point1[0] * (1 - time) + point2[0] * time;
-                    double y = point1[1] * (1 - time) + point2[1] * time;
+                    float x = point1[0] * (1 - time) + point2[0] * time;
+                    float y = point1[1] * (1 - time) + point2[1] * time;
 
-                    Vector<double> resultPoint = Vector<double>.Build.DenseOfArray([x, y, 0]);
+                    Vector<float> resultPoint = Vector<float>.Build.DenseOfArray([x, y, 0]);
 
                     newPoints.Add(resultPoint);
                 }

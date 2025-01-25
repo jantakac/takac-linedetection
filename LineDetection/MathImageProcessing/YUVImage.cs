@@ -93,15 +93,6 @@ namespace LineDetection.MathImageProcessing
             GaussianFilter3.HorizontalConvolution(src, dst, 256, 1);
             histogram = dst.Select(x => (int)x).ToArray();
 
-            //intensityPropabilities = new double[256];
-            //intensitySum = 0f;
-
-            //for (int i = 0; i < 256; i++)
-            //{
-            //    intensityPropabilities[i] = (double)histogram[i] / pixelCount;
-            //    intensitySum += i * intensityPropabilities[i];
-            //}
-
             int histogramMinimum = int.MaxValue;
             int histogramMaximum = int.MinValue;
 
@@ -135,6 +126,11 @@ namespace LineDetection.MathImageProcessing
             }
 
             otsuTreshold = OtsuTreshold.GetOtsuThreshold(this);
+
+            leftMax = 0;
+            rightMax = 0;
+            leftMaxIndex = 128;
+            rightMaxIndex = 128;
 
             // find min and max
             for (int i = 0; i < 256; i++)

@@ -22,7 +22,6 @@ namespace LineDetection
 
         private YUVImage? baseImage;
         private YUVImage? processedImage;
-        private CoordTransformations? coordTransformations;
         private BezierCurve? bezierCurve;
 
         public FormMain()
@@ -213,8 +212,6 @@ namespace LineDetection
             Stopwatch stopwatch = new();
             TimeSpan elapsedTime;
 
-            coordTransformations = new((int)numericUpDownWidth.Value, 0, 0, (int)numericUpDownHeight.Value, -500.0f, 0.0f, 500.0f, 1000.0f);
-
             imageWidth = (int)numericUpDownWidth.Value;
             imageHeight = (int)numericUpDownHeight.Value;
 
@@ -350,21 +347,21 @@ namespace LineDetection
 
             if (checkBoxFitBezier.Checked && curvePoints != null && curvePoints.Length > 3)
             {
-                List<Vector<double>> floatPoints = [];
+                List<Vector<float>> floatPoints = [];
 
                 for (int i = 0; i < curvePoints.Length; i += 2)
                 {
-                    floatPoints.Add(coordTransformations.FromUVtoXYVectorDouble(new Point(curvePoints[i], curvePoints[i + 1])));
+                    floatPoints.Add(CoordTrans.FromUVtoXYVectorFloat(new Point(curvePoints[i], curvePoints[i + 1])));
                 }
 
                 floatPoints.Reverse();
 
                 stopwatch.Start();
 
-                Vector<double>[] controlPoints = BezierCurveFitting.FitCubicBezier(floatPoints.ToArray());
+                Vector<float>[] controlPoints = BezierCurveFitting.FitCubicBezier([.. floatPoints]);
 
                 if (controlPoints != null)
-                    bezierCurve = new([.. controlPoints], coordTransformations);
+                    bezierCurve = new([.. controlPoints]);
 
                 stopwatch.Stop();
                 TimeSpan et = stopwatch.Elapsed;

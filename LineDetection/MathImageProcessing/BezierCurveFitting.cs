@@ -4,7 +4,7 @@ namespace LineDetection.MathImageProcessing
 {
     public static class BezierCurveFitting
     {
-        public static Vector<double>[] FitCubicBezier(Vector<double>[] points)
+        public static Vector<float>[] FitCubicBezier(Vector<float>[] points)
         {
             int n = points.Length;
 
@@ -14,17 +14,17 @@ namespace LineDetection.MathImageProcessing
             }
 
             // Fixed control points
-            Vector<double> P0 = points[0];
-            Vector<double> P3 = points[n - 1];
+            Vector<float> P0 = points[0];
+            Vector<float> P3 = points[n - 1];
 
             // Parameter t values for each point (chord length parameterization)
-            double[] t = new double[n];
+            float[] t = new float[n];
 
             t[0] = 0;
 
             for (int i = 1; i < n; i++)
             {
-                t[i] = t[i - 1] + (points[i] - points[i - 1]).L2Norm();
+                t[i] = t[i - 1] + (float)(points[i] - points[i - 1]).L2Norm();
             }
             for (int i = 1; i < n; i++)
             {
@@ -32,17 +32,17 @@ namespace LineDetection.MathImageProcessing
             }
 
             // Create matrix A and vector B for least squares solution
-            var A = Matrix<double>.Build.Dense(n, 2);
-            var Bx = Vector<double>.Build.Dense(n);
-            var By = Vector<double>.Build.Dense(n);
+            var A = Matrix<float>.Build.Dense(n, 2);
+            var Bx = Vector<float>.Build.Dense(n);
+            var By = Vector<float>.Build.Dense(n);
 
             for (int i = 0; i < n; i++)
             {
-                double u = 1 - t[i];
-                double tt = t[i] * t[i];
-                double uu = u * u;
-                double ttt = tt * t[i];
-                double uuu = uu * u;
+                float u = 1 - t[i];
+                float tt = t[i] * t[i];
+                float uu = u * u;
+                float ttt = tt * t[i];
+                float uuu = uu * u;
 
                 // Note: we are solving for P1 and P2, so we use the fixed P0 and P3
                 A[i, 0] = 3 * uu * t[i]; // Coefficient for P1
@@ -59,8 +59,8 @@ namespace LineDetection.MathImageProcessing
             return
             [
                 P0,
-                Vector<double>.Build.DenseOfArray([P1P2X[0], P1P2Y[0], 0]),
-                Vector<double>.Build.DenseOfArray([P1P2X[1], P1P2Y[1], 0]),
+                Vector<float>.Build.DenseOfArray([P1P2X[0], P1P2Y[0], 0]),
+                Vector<float>.Build.DenseOfArray([P1P2X[1], P1P2Y[1], 0]),
                 P3,
             ];
         }

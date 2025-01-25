@@ -3,16 +3,11 @@ using MathNet.Numerics.LinearAlgebra;
 
 namespace LineDetection.GraphicalObjects
 {
-    public sealed class BezierCurve : CurveBase
+    /// <summary>
+    /// Konstruktor
+    /// </summary>
+    public sealed class BezierCurve(List<Vector<float>> parControlPoints) : CurveBase(parControlPoints)
     {
-        /// <summary>
-        /// Konstruktor
-        /// </summary>
-        public BezierCurve(List<Vector<double>> parControlPoints, CoordTransformations parCoordTransformations) 
-            :base(parControlPoints, parCoordTransformations)
-        {
-        }
-
         /// <summary>
         /// Prepocitanie krivky podla potreby
         /// </summary>
@@ -28,7 +23,7 @@ namespace LineDetection.GraphicalObjects
             segmentLengths = [];
 
             for (int i = 0; i < curvePoints.Count - 1; i++)
-                segmentLengths.Add(ct.CalculateDistanceBetweenPoints(curvePoints[i], curvePoints[i + 1]));
+                segmentLengths.Add(CoordTrans.CalculateDistanceBetweenPoints(curvePoints[i], curvePoints[i + 1]));
 
             length = segmentLengths.Sum();
         }
@@ -36,7 +31,7 @@ namespace LineDetection.GraphicalObjects
         /// <summary>
         /// GetPointAndAngleOnCurve
         /// </summary>
-		public override Vector<double> GetPointAndAngleOnCurve(double time, out double angle)
+		public override Vector<float> GetPointAndAngleOnCurve(float time, out float angle)
         {
             return DeCasteljau.GetDeCasteljauPoint(controlPoints, time, out angle);
         }
@@ -52,8 +47,8 @@ namespace LineDetection.GraphicalObjects
             // Draw lines between control points for better visibility
             for (int i = 0; i < curvePoints.Count - 1; i++)
             {
-                PointF point1 = ct.GetUVF(curvePoints[i]);
-                PointF point2 = ct.GetUVF(curvePoints[i + 1]);
+                PointF point1 = CoordTrans.GetUVF(curvePoints[i]);
+                PointF point2 = CoordTrans.GetUVF(curvePoints[i + 1]);
 
                 g.DrawLine(Pens.Pink, point1, point2);
                 DrawingPrimitives.DrawAntialiasedDot(g, point1, Color.LimeGreen);
@@ -66,8 +61,8 @@ namespace LineDetection.GraphicalObjects
             {
                 for (int i = 0; i < controlPoints.Count - 1; i++)
                 {
-                    PointF point1 = ct.GetUVF(controlPoints[i]);
-                    PointF point2 = ct.GetUVF(controlPoints[i + 1]);
+                    PointF point1 = CoordTrans.GetUVF(controlPoints[i]);
+                    PointF point2 = CoordTrans.GetUVF(controlPoints[i + 1]);
 
                     pen.DashPattern = dashValues;
                     g.DrawLine(pen, point1, point2);
@@ -77,7 +72,7 @@ namespace LineDetection.GraphicalObjects
             // Draw control point anchors
             using var font = new Font("Arial", 10);
             // Draw first control point
-            Point controlPoint = ct.GetUV(controlPoints[0]);
+            Point controlPoint = CoordTrans.GetUV(controlPoints[0]);
             Point point = new(controlPoint.X - 5, controlPoint.Y - 5);
             Rectangle rect = new(point, new Size(10, 10));
             g.FillRectangle(ControlPointIsSelected(0) ? Brushes.LimeGreen : Brushes.OrangeRed, rect);
@@ -87,7 +82,7 @@ namespace LineDetection.GraphicalObjects
             // Draw intermediate control points
             for (int i = 1; i < controlPoints.Count - 1; i++)
             {
-                controlPoint = ct.GetUV(controlPoints[i]);
+                controlPoint = CoordTrans.GetUV(controlPoints[i]);
                 point = new Point(controlPoint.X - 5, controlPoint.Y - 5);
                 rect = new Rectangle(point, new Size(10, 10));
                 g.FillRectangle(ControlPointIsSelected(i) ? Brushes.LimeGreen : Brushes.DarkOrange, rect);
@@ -96,7 +91,7 @@ namespace LineDetection.GraphicalObjects
             }
 
             // Draw last control point
-            controlPoint = ct.GetUV(controlPoints[controlPoints.Count - 1]);
+            controlPoint = CoordTrans.GetUV(controlPoints[controlPoints.Count - 1]);
             point = new Point(controlPoint.X - 5, controlPoint.Y - 5);
             rect = new Rectangle(point, new Size(10, 10));
             g.FillRectangle(ControlPointIsSelected(controlPoints.Count - 1) ? Brushes.LimeGreen : Brushes.OrangeRed, rect);

@@ -5,6 +5,8 @@
     /// </summary>
     public static class OtsuTreshold
     {
+        public static int BackgroundMargin { get; set; } = 40;
+
         /// <summary>
         /// Applies Otsu threshold to a 1D byte array, returning a new 1D byte array with values 0 or 255.
         /// </summary>
@@ -19,7 +21,7 @@
             int leftMaxIndex = 128;
             int rightMaxIndex = 128;
 
-            // find min and max
+            // if the image contains only background, set all bytes to 255
             for (int i = 0; i < 256; i++)
             {
                 if (i < threshold)
@@ -41,6 +43,11 @@
             }
 
             int deltaMode = rightMaxIndex - leftMaxIndex;
+            if (deltaMode < BackgroundMargin)
+            {
+                Array.Fill(image.Bytes, (byte)255);
+                return;
+            }
 
             int width = image.Width;
             int height = image.Height;
@@ -49,7 +56,7 @@
             {
                 for (int x = 0; x < width; x++)
                 {
-                    // safe margin at the border of the image
+                    // safe margin at the left and right borders of the image
                     if (x < 4 || x > width - 1 - 4)
                         image.Bytes[x + y * width] = 255;
                     else
@@ -115,9 +122,6 @@
                     bestThreshold = (byte)i;
                 }
             }
-
-            //FormMain form = Application.OpenForms.OfType<FormMain>().FirstOrDefault();
-            //form?.textBoxMessages.AppendText(parImage.Width + ", " + parImage.Height + ", " + bestThreshold);
 
             return bestThreshold;
         }
