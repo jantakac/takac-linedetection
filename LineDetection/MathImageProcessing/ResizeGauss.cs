@@ -1,4 +1,8 @@
-﻿namespace LineDetection.MathImageProcessing
+﻿using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+namespace LineDetection.MathImageProcessing
 {
     public static class ResizeGauss
     {
@@ -53,25 +57,71 @@
         {
             int size = radius * 2 + 1;
             kernel = new float[size, size];
-            float mean = size / 2;
-            float sum = 0.0f;
+            float mean = size / 2.0f;
+
+            float[] weights = new float[size];
+
+            float twoSigmaSq = 2 * sigma * sigma;
+            float varianceFactor = 1.0f / twoSigmaSq;
+
+            for (int i = 0; i < size; i++)
+            {
+                float v = i - mean;
+                weights[i] = (float)Math.Exp(-(v * v) * varianceFactor);
+            }
+
+            Span<float> kernelSpan = MemoryMarshal.CreateSpan(ref kernel[0, 0], kernel.Length);
+
+            int vectorCount = Vector<float>.Count;
 
             for (int x = 0; x < size; x++)
             {
-                for (int y = 0; y < size; y++)
+                float weightX = weights[x];
+                int y = 0;
+
+                for (; y <= size - vectorCount; y += vectorCount)
                 {
-                    kernel[x, y] = (float)(Math.Exp(-0.5 * (Math.Pow((x - mean) / sigma, 2.0) + Math.Pow((y - mean) / sigma, 2.0))) / (2 * Math.PI * sigma * sigma));
-                    sum += kernel[x, y];
+                    Vector<float> vecY = new Vector<float>(weights, y);
+
+                    Vector<float> vecResult = vecY * weightX;
+
+                    vecResult.CopyTo(kernelSpan.Slice((x * size) + y));
+                }
+
+                for (; y < size; y++)
+                {
+                    kernel[x, y] = weightX * weights[y];
                 }
             }
 
-            // Normalize the kernel
-            for (int x = 0; x < size; x++)
+            int k = 0;
+            Vector<float> vSum = Vector<float>.Zero;
+
+            for (; k <= kernelSpan.Length - vectorCount; k += vectorCount)
             {
-                for (int y = 0; y < size; y++)
-                {
-                    kernel[x, y] /= sum;
-                }
+                vSum += new Vector<float>(kernelSpan.Slice(k));
+            }
+            float sum = Vector.Sum(vSum);
+
+            for (; k < kernelSpan.Length; k++)
+            {
+                sum += kernelSpan[k];
+            }
+
+            float invSum = 1.0f / sum;
+            Vector<float> vInvSum = new Vector<float>(invSum);
+
+            k = 0;
+            for (; k <= kernelSpan.Length - vectorCount; k += vectorCount)
+            {
+                Vector<float> v = new Vector<float>(kernelSpan.Slice(k));
+                v *= vInvSum;
+                v.CopyTo(kernelSpan.Slice(k));
+            }
+
+            for (; k < kernelSpan.Length; k++)
+            {
+                kernelSpan[k] *= invSum;
             }
         }
 
@@ -84,49 +134,105 @@
 
             int originalWidth = image.Width;
             int originalHeight = image.Height;
-
             int kernelSize = kernel.GetLength(0);
             int halfKernel = kernelSize / 2;
 
-            byte[] resizedImage = new byte[newWidth * newHeight];
+            byte[] resizedBuffer = new byte[newWidth * newHeight];
+
+            // Flatten kernel for faster memory access
+            float[] kernelFlat = new float[kernelSize * kernelSize];
+            for (int y = 0; y < kernelSize; y++)
+                for (int x = 0; x < kernelSize; x++)
+                    kernelFlat[y * kernelSize + x] = kernel[y, x];
 
             float scaleX = (float)originalWidth / newWidth;
             float scaleY = (float)originalHeight / newHeight;
 
-            for (int newY = 0; newY < newHeight; newY++)
+            unsafe
             {
-                for (int newX = 0; newX < newWidth; newX++)
+                fixed (byte* pSrc = image.Bytes)
+                fixed (byte* pDst = resizedBuffer)
+                fixed (float* pKernel = kernelFlat)
                 {
-                    double srcX = newX * scaleX;
-                    double srcY = newY * scaleY;
+                    int vectorCount = Vector<float>.Count;
 
-                    int srcXInt = (int)Math.Floor(srcX);
-                    int srcYInt = (int)Math.Floor(srcY);
+                    float* tempPixelBuffer = stackalloc float[vectorCount];
 
-                    float filteredValue = 0.0f;
-                    float weightSum = 0.0f;
-
-                    for (int ky = -halfKernel; ky <= halfKernel; ky++)
+                    for (int newY = 0; newY < newHeight; newY++)
                     {
-                        for (int kx = -halfKernel; kx <= halfKernel; kx++)
+                        double srcY = newY * scaleY;
+                        int srcYInt = (int)Math.Floor(srcY);
+                        int destRowOffset = newY * newWidth;
+
+                        for (int newX = 0; newX < newWidth; newX++)
                         {
-                            int sampleX = Math.Clamp(srcXInt + kx, 0, originalWidth - 1);
-                            int sampleY = Math.Clamp(srcYInt + ky, 0, originalHeight - 1);
+                            double srcX = newX * scaleX;
+                            int srcXInt = (int)Math.Floor(srcX);
 
-                            int sampleIndex = sampleY * originalWidth + sampleX;
-                            float weight = kernel[ky + halfKernel, kx + halfKernel];
+                            float filteredValue = 0.0f;
+                            float weightSum = 0.0f;
 
-                            filteredValue += weight * image.Bytes[sampleIndex];
-                            weightSum += weight;
+                            bool isSafe = (srcXInt - halfKernel >= 0) && (srcXInt + halfKernel < originalWidth) &&
+                                          (srcYInt - halfKernel >= 0) && (srcYInt + halfKernel < originalHeight);
+
+                            if (isSafe)
+                            {
+                                for (int ky = 0; ky < kernelSize; ky++)
+                                {
+                                    int currentSrcY = srcYInt + ky - halfKernel;
+                                    int rowStart = currentSrcY * originalWidth + (srcXInt - halfKernel);
+
+                                    int kx = 0;
+                                    int kIndex = ky * kernelSize;
+
+                                    for (; kx <= kernelSize - vectorCount; kx += vectorCount)
+                                    {
+                                        Vector<float> vWeights = Unsafe.Read<Vector<float>>(pKernel + kIndex + kx);
+
+                                        for (int j = 0; j < vectorCount; j++)
+                                        {
+                                            tempPixelBuffer[j] = pSrc[rowStart + kx + j];
+                                        }
+
+                                        Vector<float> vPixels = Unsafe.Read<Vector<float>>(tempPixelBuffer);
+
+                                        filteredValue += Vector.Dot(vWeights, vPixels);
+                                        weightSum += Vector.Sum(vWeights);
+                                    }
+
+                                    for (; kx < kernelSize; kx++)
+                                    {
+                                        float w = pKernel[kIndex + kx];
+                                        filteredValue += w * pSrc[rowStart + kx];
+                                        weightSum += w;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                for (int ky = -halfKernel; ky <= halfKernel; ky++)
+                                {
+                                    for (int kx = -halfKernel; kx <= halfKernel; kx++)
+                                    {
+                                        int sampleX = Math.Clamp(srcXInt + kx, 0, originalWidth - 1);
+                                        int sampleY = Math.Clamp(srcYInt + ky, 0, originalHeight - 1);
+                                        int sampleIndex = sampleY * originalWidth + sampleX;
+
+                                        float weight = pKernel[(ky + halfKernel) * kernelSize + (kx + halfKernel)];
+                                        filteredValue += weight * pSrc[sampleIndex];
+                                        weightSum += weight;
+                                    }
+                                }
+                            }
+
+                            if (weightSum > 0) filteredValue /= weightSum;
+                            pDst[destRowOffset + newX] = (byte)(filteredValue > 255 ? 255 : (filteredValue < 0 ? 0 : filteredValue));
                         }
                     }
-
-                    int newIndex = newY * newWidth + newX;
-                    resizedImage[newIndex] = (byte)Math.Clamp(filteredValue / weightSum, 0, 255);
                 }
             }
 
-            return new YUVImage(resizedImage, newWidth, newHeight);
+            return new YUVImage(resizedBuffer, newWidth, newHeight);
         }
     }
 }
