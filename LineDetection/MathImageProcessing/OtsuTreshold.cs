@@ -1,92 +1,128 @@
-﻿namespace LineDetection.MathImageProcessing
+﻿using System;
+
+namespace LineDetection.MathImageProcessing
 {
     /// <summary>
-    /// Contains a method for applying Otsu threshold to a 1D byte array.
+    /// Contains methods for applying global and adaptive Otsu thresholding.
     /// </summary>
     public static class OtsuTreshold
     {
         public static int BackgroundMargin { get; set; } = 40;
 
         /// <summary>
-        /// Applies Otsu threshold to a 1D byte array, returning a new 1D byte array with values 0 or 255.
+        /// Applies Adaptive Otsu thresholding by dividing the image into vertical zones.
+        /// Better for uneven lighting (e.g., shadows on the road).
         /// </summary>
-        public static void Apply(YUVImage? image)
+        /// <param name="image">Input image.</param>
+        /// <param name="zonesCount">Number of horizontal strips (vertical zones). Default is 8.</param>
+        public static void ApplyAdaptive(YUVImage? image, int zonesCount = 8)
         {
             ArgumentNullException.ThrowIfNull(image);
 
-            var threshold = GetOtsuThreshold(image);
+            int width = image.Width;
+            int height = image.Height;
+
+            int zoneHeight = (int)Math.Ceiling((double)height / zonesCount);
+
+            for (int i = 0; i < zonesCount; i++)
+            {
+                int startY = i * zoneHeight;
+                int endY = Math.Min(startY + zoneHeight, height);
+
+                if (startY >= height) break;
+
+                ProcessZone(image, startY, endY, width);
+            }
+        }
+
+        private static void ProcessZone(YUVImage image, int startY, int endY, int width)
+        {
+            int[] zoneHistogram = new int[256];
+            int pixelCount = 0;
+
+            for (int y = startY; y < endY; y++)
+            {
+                int rowOffset = y * width;
+                for (int x = 0; x < width; x++)
+                {
+                    if (x >= 4 && x <= width - 5)
+                    {
+                        byte intensity = image.Bytes[rowOffset + x];
+                        zoneHistogram[intensity]++;
+                        pixelCount++;
+                    }
+                }
+            }
+
+            if (pixelCount == 0) return;
+
+            byte threshold = GetOtsuThresholdFromHistogram(zoneHistogram, pixelCount);
 
             int leftMax = 0;
             int rightMax = 0;
-            int leftMaxIndex = 128;
-            int rightMaxIndex = 128;
+            int leftMaxIndex = 0; // Default to 0 instead of 128 to be safe
+            int rightMaxIndex = 255;
 
-            // if the image contains only background, set all bytes to 255
-            for (int i = 0; i < 256; i++)
+            for (int k = 0; k < 256; k++)
             {
-                if (i < threshold)
+                if (k < threshold)
                 {
-                    if (image.Histogram[i] > leftMax)
+                    if (zoneHistogram[k] > leftMax)
                     {
-                        leftMax = image.Histogram[i];
-                        leftMaxIndex = i;
+                        leftMax = zoneHistogram[k];
+                        leftMaxIndex = k;
                     }
                 }
-                else if (i > threshold)
+                else if (k > threshold)
                 {
-                    if (image.Histogram[i] > rightMax)
+                    if (zoneHistogram[k] > rightMax)
                     {
-                        rightMax = image.Histogram[i];
-                        rightMaxIndex = i;
+                        rightMax = zoneHistogram[k];
+                        rightMaxIndex = k;
                     }
                 }
             }
 
             int deltaMode = rightMaxIndex - leftMaxIndex;
-            if (deltaMode < BackgroundMargin)
-            {
-                Array.Fill(image.Bytes, (byte)255);
-                return;
-            }
 
-            int width = image.Width;
-            int height = image.Height;
+            bool isLowContrast = deltaMode < BackgroundMargin;
 
-            for (int y = 0; y < height; y++)
+            for (int y = startY; y < endY; y++)
             {
+                int rowOffset = y * width;
                 for (int x = 0; x < width; x++)
                 {
-                    // safe margin at the left and right borders of the image
+                    int index = rowOffset + x;
+
+                    // Apply safety margin at borders
                     if (x < 4 || x > width - 1 - 4)
-                        image.Bytes[x + y * width] = 255;
+                    {
+                        image.Bytes[index] = 255;
+                    }
                     else
-                        image.Bytes[x + y * width] = image.Bytes[x + y * width] < threshold ? (byte)0 : (byte)255;
+                    {
+                        if (isLowContrast)
+                        {
+                            image.Bytes[index] = 255;
+                        }
+                        else
+                        {
+                            image.Bytes[index] = image.Bytes[index] < threshold ? (byte)0 : (byte)255;
+                        }
+                    }
                 }
             }
         }
 
         /// <summary>
-        /// Get otsu threshold
+        /// Calculates Otsu threshold based on a pre-calculated histogram.
         /// </summary>
-        /// <param name="grayscaleData"></param>
-        /// <returns></returns>
-        public static byte GetOtsuThreshold(YUVImage parImage)
+        public static byte GetOtsuThresholdFromHistogram(int[] histogram, int totalPixels)
         {
-            ArgumentNullException.ThrowIfNull(parImage);
-
-            int pixelCount = parImage.Width * parImage.Height;
-
-            int[] intensityHistogram = new int[256];
-            for (int i = 0; i < pixelCount; i++)
-            {
-                byte intensity = parImage.Bytes[i];
-                intensityHistogram[intensity]++;
-            }
-
             float[] intensityProbabilities = new float[256];
             for (int i = 0; i < 256; i++)
             {
-                intensityProbabilities[i] = (float)intensityHistogram[i] / pixelCount;
+                intensityProbabilities[i] = (float)histogram[i] / totalPixels;
             }
 
             float totalIntensitySum = 0f;
@@ -124,6 +160,28 @@
             }
 
             return bestThreshold;
+        }
+
+        // Original method for compatibility
+        public static void Apply(YUVImage? image)
+        {
+            ApplyAdaptive(image, 8);
+        }
+
+        // Original helper kept for compatibility, wrapping the new logic
+        public static byte GetOtsuThreshold(YUVImage parImage)
+        {
+            ArgumentNullException.ThrowIfNull(parImage);
+            int pixelCount = parImage.Width * parImage.Height;
+
+            // Calculate histogram globally
+            int[] histogram = new int[256];
+            for (int i = 0; i < pixelCount; i++)
+            {
+                histogram[parImage.Bytes[i]]++;
+            }
+
+            return GetOtsuThresholdFromHistogram(histogram, pixelCount);
         }
     }
 }
